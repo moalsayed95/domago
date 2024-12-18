@@ -69,14 +69,15 @@
 
 .map-container > div {
     width: 100%;
-    height: 600px;
+    height: 100%;
+    border-radius: 20px;
 }
 
 /* Styles for the circular recording toggle button */
 .record-button {
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: 120px;
+    height: 120px;
     border-radius: 9999px;
     background: linear-gradient(90deg, #ff00c8, #8400ff, #ff00c8);
     background-size: 300% 300%;

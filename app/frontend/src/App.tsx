@@ -105,20 +105,23 @@ function App() {
             <main className="flex flex-grow flex-col">
                 <div className="container mx-auto flex flex-col items-center justify-center px-4">
                     {listings.length > 0 && (
-                        <div className="map-container mb-8 w-full">
-                            <MapView listings={listings} center={mapCenter} />
+                        <div className="mb-8 flex w-full">
+                            <div className="flex w-1/2 items-center justify-center">
+                                <div
+                                    className={`record-button ${isRecording ? "recording" : ""}`}
+                                    onClick={onToggleListening}
+                                    aria-label={isRecording ? t("app.stopRecording") : t("app.startRecording")}
+                                >
+                                    {isRecording ? <MicOff className="icon" /> : <Mic className="icon" />}
+                                </div>
+                            </div>
+                            <div className="mt-5 w-1/2">
+                                <div className="overflow-hidden rounded-lg">
+                                    <MapView listings={listings} center={mapCenter} />
+                                </div>
+                            </div>
                         </div>
                     )}
-
-                    <div className="max-w-screen mb-2 flex w-full items-center justify-center rounded bg-white py-12">
-                        <div
-                            className={`record-button ${isRecording ? "recording" : ""}`}
-                            onClick={onToggleListening}
-                            aria-label={isRecording ? t("app.stopRecording") : t("app.startRecording")}
-                        >
-                            {isRecording ? <MicOff className="icon" /> : <Mic className="icon" />}
-                        </div>
-                    </div>
 
                     {listings.length > 0 && (
                         <div className="flex flex-wrap justify-center gap-4">
