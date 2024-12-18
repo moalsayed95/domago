@@ -2,12 +2,13 @@ import { Listing } from "@/types";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "./card";
 
 interface ListingCardProps {
-    listing: Listing;
+    listing: Listing & { isBest?: boolean };
+    isBest?: boolean;
 }
 
-export default function ListingCard({ listing }: ListingCardProps) {
+export default function ListingCard({ listing, isBest = false }: ListingCardProps) {
     return (
-        <Card className="m-4 w-full max-w-md overflow-hidden rounded-lg border border-gray-200 shadow-md">
+        <Card className={`m-4 w-full max-w-md overflow-hidden rounded-lg border ${isBest ? "best-listing-card" : "border-gray-200"} shadow-md`}>
             <CardHeader className="bg-gray-100 p-4">
                 <CardTitle className="text-lg font-bold">{listing.title}</CardTitle>
                 <CardDescription className="text-sm text-gray-600">{listing.location}</CardDescription>

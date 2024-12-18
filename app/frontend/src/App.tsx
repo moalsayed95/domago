@@ -4,14 +4,11 @@ import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import StatusMessage from "@/components/ui/status-message";
-
 import useRealTime from "@/hooks/useRealtime";
 import useAudioRecorder from "@/hooks/useAudioRecorder";
 import useAudioPlayer from "@/hooks/useAudioPlayer";
-
 import { Listing } from "./types";
 import isEqual from "lodash.isequal";
-
 import logo from "./assets/logo.svg";
 import ListingCard from "./components/ui/ListingCard";
 import MapView from "./components/ui/MapView";
@@ -34,8 +31,6 @@ function App() {
         onReceivedExtensionMiddleTierToolResponse: message => {
             const result = JSON.parse(message.tool_result);
             const newListings = result.listings || [];
-            console.log("the listings are", newListings);
-            // Only update if listings have actually changed
             if (!isEqual(listings, newListings)) {
                 setListings(newListings);
             }
@@ -50,20 +45,23 @@ function App() {
             startSession();
             await startAudioRecording();
             resetAudioPlayer();
-
             setIsRecording(true);
         } else {
             await stopAudioRecording();
             stopAudioPlayer();
             inputAudioBufferClear();
-
             setIsRecording(false);
         }
     };
 
     const { t } = useTranslation();
+    const mapCenter: [number, number] = listings.length > 0 ? [listings[0].lng, listings[0].lat] : [16.3738, 48.2082];
 
-    const mapCenter: [number, number] = listings.length > 0 ? [listings[0].lng, listings[0].lat] : [16.3738, 48.2082]; // Default center: Vienna
+    // Mark the first listing as the "best"
+    const enhancedListings = listings.map((l, idx) => ({
+        ...l,
+        isBest: idx === 0 // add an isBest property for the first listing
+    }));
 
     return (
         <div className="flex min-h-screen flex-col bg-gray-100 text-gray-900">
@@ -94,18 +92,16 @@ function App() {
                     <StatusMessage isRecording={isRecording} />
                 </div>
 
-                {/* Map Component */}
-                {listings.length > 0 && (
+                {enhancedListings.length > 0 && (
                     <div className="mb-6 w-full max-w-5xl">
-                        <MapView listings={listings} center={mapCenter} />
+                        <MapView listings={enhancedListings} center={mapCenter} />
                     </div>
                 )}
 
-                {/* Render Listings */}
-                {listings.length > 0 && (
+                {enhancedListings.length > 0 && (
                     <div className="flex flex-wrap justify-center">
-                        {listings.map((l, idx) => (
-                            <ListingCard key={idx} listing={l} />
+                        {enhancedListings.map((l, idx) => (
+                            <ListingCard key={idx} listing={l} isBest={l.isBest} />
                         ))}
                     </div>
                 )}
