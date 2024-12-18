@@ -1,13 +1,13 @@
 {
     "app": {
-        "title": "Matching People with Places They Love.",
+        "title": "Microsoft Real Estate Assistant",
         "footer": "Built with Azure AI Search + Azure OpenAI",
         "stopRecording": "Stop recording",
         "startRecording": "Start recording",
         "stopConversation": "Stop conversation"
     },
     "status": {
-        "notRecordingMessage": "Let's find your next home",
+        "notRecordingMessage": "Start Conversation",
         "conversationInProgress": "Conversation in progress"
     },
     "history": {
