@@ -92,9 +92,13 @@ class IndexManager:
             SimpleField(name="built_year", type="Edm.Int32", filterable=True, facetable=True),
             SimpleField(name="furnished", type="Edm.Boolean", filterable=True, facetable=True),
             SimpleField(name="availability", type="Edm.String", filterable=True, facetable=False),
-            SimpleField(name="pet_friendly", type="Edm.Boolean", filterable=True, facetable=True),
+            SimpleField(name="pets_allowed", type="Edm.Boolean", filterable=True, facetable=True),
             SimpleField(name="lat", type="Edm.Double", filterable=True, facetable=True),
             SimpleField(name="lng", type="Edm.Double", filterable=True, facetable=True),
+            SimpleField(name="elevator", type="Edm.Boolean", filterable=True, facetable=True),
+            SimpleField(name="balcony", type="Edm.Boolean", filterable=True, facetable=True),
+            SimpleField(name="smoking_allowed", type="Edm.Boolean", filterable=True, facetable=True),
+            SimpleField(name="deposit", type="Edm.Double", filterable=True, facetable=True),
 
             # Embedding vector field
             SearchField(
@@ -108,7 +112,6 @@ class IndexManager:
                 vector_search_dimensions=self.embedding_dimensions,
                 vector_search_profile_name="embedding_config",
             ),
-            # Optional fields like contact, transport_accessibility, geolocation, image_url can be added if desired
         ]
 
         vectorizers = [
@@ -123,7 +126,6 @@ class IndexManager:
                 ),
             )
         ]
-
 
         index = SearchIndex(
             name=self.index_name,

@@ -20,6 +20,8 @@ export default function MapView({ listings, center }: MapProps) {
             zoom: 12,
             view: "Auto",
             disableTelemetry: true,
+            showFeedbackLink: false,
+            showLogo: false,
             authOptions: {
                 authType: atlas.AuthenticationType.subscriptionKey,
                 subscriptionKey: import.meta.env.VITE_AZURE_MAPS_SUBSCRIPTION_KEY
@@ -80,5 +82,5 @@ export default function MapView({ listings, center }: MapProps) {
         }
     }, [listings, center]);
 
-    return <div ref={mapContainerRef} style={{ width: "100%", height: "400px" }} />;
+    return <div ref={mapContainerRef} style={{ width: "100%", height: "500px" }} />;
 }

@@ -1,13 +1,14 @@
-import { useState } from "react";
-import { Mic, MicOff } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Mic, MicOff, Sun, Moon } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import isEqual from "lodash.isequal";
 
 import StatusMessage from "@/components/ui/status-message";
 import useRealTime from "@/hooks/useRealtime";
 import useAudioRecorder from "@/hooks/useAudioRecorder";
 import useAudioPlayer from "@/hooks/useAudioPlayer";
 import { Listing } from "./types";
-import isEqual from "lodash.isequal";
+
 import logo from "./assets/logo.svg";
 import ListingCard from "./components/ui/ListingCard";
 import MapView from "./components/ui/MapView";
@@ -15,6 +16,10 @@ import MapView from "./components/ui/MapView";
 function App() {
     const [isRecording, setIsRecording] = useState(false);
     const [listings, setListings] = useState<Listing[]>([]);
+    const [darkMode, setDarkMode] = useState(() => {
+        // Load initial mode from localStorage if exists, else default to light
+        return localStorage.getItem("theme") === "dark";
+    });
 
     const { startSession, addUserAudio, inputAudioBufferClear } = useRealTime({
         onWebSocketOpen: () => console.log("WebSocket connection opened"),
@@ -39,6 +44,16 @@ function App() {
     const { reset: resetAudioPlayer, play: playAudio, stop: stopAudioPlayer } = useAudioPlayer();
     const { start: startAudioRecording, stop: stopAudioRecording } = useAudioRecorder({ onAudioRecorded: addUserAudio });
 
+    useEffect(() => {
+        if (darkMode) {
+            document.documentElement.classList.add("dark");
+            localStorage.setItem("theme", "dark");
+        } else {
+            document.documentElement.classList.remove("dark");
+            localStorage.setItem("theme", "light");
+        }
+    }, [darkMode]);
+
     const onToggleListening = async () => {
         if (!isRecording) {
             startSession();
@@ -53,6 +68,8 @@ function App() {
         }
     };
 
+    const toggleDarkMode = () => setDarkMode(!darkMode);
+
     const { t } = useTranslation();
     const mapCenter: [number, number] = listings.length > 0 ? [listings[0].lng, listings[0].lat] : [16.3738, 48.2082];
 
@@ -63,21 +80,32 @@ function App() {
     }));
 
     return (
-        <div className="flex min-h-screen flex-col bg-gray-100 text-gray-900">
-            {/* Header Section */}
-            <header className="w-full border-b bg-white py-4">
-                <div className="container mx-auto flex flex-col items-center gap-4 px-4 sm:flex-row sm:items-center sm:justify-start">
-                    <img src={logo} alt="Azure logo" className="h-16 w-16" />
-                    <h1 className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-center text-3xl font-bold text-transparent sm:text-left md:text-5xl">
-                        {t("app.title")}
-                    </h1>
+        <div className="flex min-h-screen flex-col bg-background text-foreground transition-colors dark:bg-foreground dark:text-background">
+            <header className="w-full border-b bg-white py-4 transition-colors dark:bg-gray-900">
+                <div className="container mx-auto flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center gap-4">
+                        <img src={logo} alt="Azure logo" className="h-16 w-16" />
+                        <h1 className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-center text-3xl font-bold text-transparent sm:text-left md:text-5xl">
+                            {t("app.title")}
+                        </h1>
+                    </div>
+                    <button onClick={toggleDarkMode} aria-label="Toggle Dark Mode" className="rounded-full bg-gray-200 p-2 transition-colors dark:bg-gray-700">
+                        {darkMode ? <Sun className="text-yellow-400" /> : <Moon className="text-gray-800 dark:text-gray-300" />}
+                    </button>
                 </div>
             </header>
 
             <main className="flex flex-grow flex-col">
-                <div className="container mx-auto flex flex-col items-center justify-center px-4 py-8">
+                <div className="container mx-auto flex flex-col items-center justify-center px-4">
+                    {/* Map Section */}
+                    {enhancedListings.length > 0 && (
+                        <div className="map-container mb-8 w-full">
+                            <MapView listings={enhancedListings} center={mapCenter} />
+                        </div>
+                    )}
+
                     {/* Recording Section */}
-                    <div className="mb-8 flex flex-col items-center justify-center">
+                    <div className="max-w-screen mb-2 flex w-full items-center justify-center rounded bg-white py-12">
                         <div
                             className={`record-button ${isRecording ? "recording" : ""}`}
                             onClick={onToggleListening}
@@ -85,15 +113,8 @@ function App() {
                         >
                             {isRecording ? <MicOff className="icon" /> : <Mic className="icon" />}
                         </div>
-                        <StatusMessage isRecording={isRecording} />
+                        {/* <StatusMessage isRecording={isRecording} /> */}
                     </div>
-
-                    {/* Map Section */}
-                    {enhancedListings.length > 0 && (
-                        <div className="mb-8 w-full">
-                            <MapView listings={enhancedListings} center={mapCenter} />
-                        </div>
-                    )}
 
                     {/* Listings Section */}
                     {enhancedListings.length > 0 && (
@@ -106,7 +127,7 @@ function App() {
                 </div>
             </main>
 
-            <footer className="w-full border-t bg-white py-4">
+            <footer className="w-full border-t bg-white py-4 transition-colors dark:bg-gray-900">
                 <div className="container mx-auto px-4 text-center">
                     <p>{t("app.footer")}</p>
                 </div>
