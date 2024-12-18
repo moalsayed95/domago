@@ -3,7 +3,6 @@ import { Mic, MicOff, Sun, Moon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import isEqual from "lodash.isequal";
 
-// import StatusMessage from "@/components/ui/status-message";
 import useRealTime from "@/hooks/useRealtime";
 import useAudioRecorder from "@/hooks/useAudioRecorder";
 import useAudioPlayer from "@/hooks/useAudioPlayer";
@@ -17,9 +16,9 @@ function App() {
     const [isRecording, setIsRecording] = useState(false);
     const [listings, setListings] = useState<Listing[]>([]);
     const [darkMode, setDarkMode] = useState(() => {
-        // Load initial mode from localStorage if exists, else default to light
         return localStorage.getItem("theme") === "dark";
     });
+    const [highlightedListingId, setHighlightedListingId] = useState<string | null>(null);
 
     const { startSession, addUserAudio, inputAudioBufferClear } = useRealTime({
         onWebSocketOpen: () => console.log("WebSocket connection opened"),
@@ -33,10 +32,24 @@ function App() {
             stopAudioPlayer();
         },
         onReceivedExtensionMiddleTierToolResponse: message => {
+            console.log("Received tool response", message);
             const result = JSON.parse(message.tool_result);
-            const newListings = result.listings || [];
-            if (!isEqual(listings, newListings)) {
-                setListings(newListings);
+
+            // If we have new listings, update them and highlight the first one
+            if (result.listings) {
+                const newListings = result.listings;
+                if (!isEqual(listings, newListings)) {
+                    setListings(newListings);
+                    // Highlight the first listing by default
+                    if (newListings.length > 0) {
+                        setHighlightedListingId(newListings[0].id);
+                    } else {
+                        setHighlightedListingId(null);
+                    }
+                }
+            } else if (result.id) {
+                // If we only received an id, change highlight to that listing
+                setHighlightedListingId(result.id);
             }
         }
     });
@@ -73,18 +86,12 @@ function App() {
     const { t } = useTranslation();
     const mapCenter: [number, number] = listings.length > 0 ? [listings[0].lng, listings[0].lat] : [16.3738, 48.2082];
 
-    // Mark the first listing as the "best"
-    const enhancedListings = listings.map((l, idx) => ({
-        ...l,
-        isBest: idx === 0
-    }));
-
     return (
         <div className="flex min-h-screen flex-col bg-background text-foreground transition-colors dark:bg-foreground dark:text-background">
             <header className="w-full border-b bg-white py-4 transition-colors dark:bg-gray-900">
                 <div className="container mx-auto flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">
-                        <img src={logo} alt="Azure logo" className="h-16 w-16" />
+                        <img src={logo} alt="Azure logo" className="h-12 w-12" />
                         <h1 className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-center text-3xl font-bold text-transparent sm:text-left md:text-5xl">
                             {t("app.title")}
                         </h1>
@@ -97,14 +104,12 @@ function App() {
 
             <main className="flex flex-grow flex-col">
                 <div className="container mx-auto flex flex-col items-center justify-center px-4">
-                    {/* Map Section */}
-                    {enhancedListings.length > 0 && (
+                    {listings.length > 0 && (
                         <div className="map-container mb-8 w-full">
-                            <MapView listings={enhancedListings} center={mapCenter} />
+                            <MapView listings={listings} center={mapCenter} />
                         </div>
                     )}
 
-                    {/* Recording Section */}
                     <div className="max-w-screen mb-2 flex w-full items-center justify-center rounded bg-white py-12">
                         <div
                             className={`record-button ${isRecording ? "recording" : ""}`}
@@ -113,14 +118,12 @@ function App() {
                         >
                             {isRecording ? <MicOff className="icon" /> : <Mic className="icon" />}
                         </div>
-                        {/* <StatusMessage isRecording={isRecording} /> */}
                     </div>
 
-                    {/* Listings Section */}
-                    {enhancedListings.length > 0 && (
+                    {listings.length > 0 && (
                         <div className="flex flex-wrap justify-center gap-4">
-                            {enhancedListings.map((l, idx) => (
-                                <ListingCard key={idx} listing={l} isBest={l.isBest} />
+                            {listings.map(l => (
+                                <ListingCard key={l.id} listing={l} highlight={highlightedListingId === l.id} />
                             ))}
                         </div>
                     )}

@@ -27,6 +27,23 @@ _search_tool_schema = {
     }
 }
 
+_return_listing_id_schema = {
+    "type": "function",
+    "name": "return_listing_id",
+    "description": "return the id of the listing the user is asking about whenever the user asks a follow up question about a listing",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "id": {
+                "type": "string",
+                "description": "this is the id of the listing they are asking about"
+            }
+        },
+        "required": ["id"],
+        "additionalProperties": False
+    }
+}
+
 
 async def _search_tool(
     search_manager, 
@@ -59,6 +76,11 @@ async def _search_tool(
     return ToolResult({"listings": listings}, ToolResultDirection.TO_CLIENT)
 
 
+async def _return_listing_id_tool( 
+    args: Any
+) -> ToolResult:
+    # Return the listing id as JSON to the frontend
+    return ToolResult({"id": args['id']}, ToolResultDirection.TO_CLIENT)
 
 def attach_rag_tools(rtmt: RTMiddleTier,
     credentials: AzureKeyCredential | DefaultAzureCredential,
@@ -67,10 +89,12 @@ def attach_rag_tools(rtmt: RTMiddleTier,
     if not isinstance(credentials, AzureKeyCredential):
         credentials.get_token("https://search.azure.com/.default") # warm this up before we start getting requests
 
-    
-
     rtmt.tools["search"] = Tool(
         schema=_search_tool_schema, 
         target=lambda args: _search_tool(search_manager, args)
     )
-    # rtmt.tools["report_grounding"] = Tool(schema=_grounding_tool_schema, target=lambda args: _report_grounding_tool(search_client, identifier_field, title_field, content_field, args))
+
+    rtmt.tools["return_listing_id"] = Tool(
+        schema=_return_listing_id_schema, 
+        target=lambda args: _return_listing_id_tool(args)
+    )

@@ -43,7 +43,7 @@ async def create_app():
         voice_choice=os.environ.get("AZURE_OPENAI_REALTIME_VOICE_CHOICE") or "alloy"
         )
     rtmt.temperature = 0.6
-    rtmt.max_tokens = 1200
+    rtmt.max_tokens = 1000
     rtmt.system_message = """
     You are a helpful assistant helping users find the right flat in Vienna. 
     You have access to a knowledge base containing data about flat listings in Vienna.
