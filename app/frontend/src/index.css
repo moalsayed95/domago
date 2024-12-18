@@ -67,7 +67,10 @@
     }
 }
 
-/* Existing tailwind and other styles remain above */
+.map-container > div {
+    width: 100%;
+    height: 600px;
+}
 
 /* Styles for the circular recording toggle button */
 .record-button {
@@ -164,6 +167,11 @@
     padding: 6px;
     background: linear-gradient(90deg, #ff00c8, #8400ff, #ff00c8);
     background-size: 300% 300%;
+}
+
+.best-listing-card,
+.border-gray-200 {
+    max-width: 450px;
 }
 
 @keyframes gradient-border {

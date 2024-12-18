@@ -64,43 +64,52 @@ function App() {
 
     return (
         <div className="flex min-h-screen flex-col bg-gray-100 text-gray-900">
-            <div className="p-4 sm:absolute sm:left-4 sm:top-4">
-                <img src={logo} alt="Azure logo" className="h-16 w-16" />
-            </div>
-            <main className="flex flex-grow flex-col items-center justify-center">
-                <h1 className="mb-8 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-4xl font-bold text-transparent md:text-7xl">
-                    {t("app.title")}
-                </h1>
-                <div className="mb-4 flex flex-col items-center justify-center">
-                    {/* New circular recording toggle button */}
-                    <div
-                        className={`record-button ${isRecording ? "recording" : ""}`}
-                        onClick={onToggleListening}
-                        aria-label={isRecording ? t("app.stopRecording") : t("app.startRecording")}
-                    >
-                        {isRecording ? <MicOff className="icon" /> : <Mic className="icon" />}
-                    </div>
-
-                    <StatusMessage isRecording={isRecording} />
+            {/* Header Section */}
+            <header className="w-full border-b bg-white py-4">
+                <div className="container mx-auto flex flex-col items-center gap-4 px-4 sm:flex-row sm:items-center sm:justify-start">
+                    <img src={logo} alt="Azure logo" className="h-16 w-16" />
+                    <h1 className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-center text-3xl font-bold text-transparent sm:text-left md:text-5xl">
+                        {t("app.title")}
+                    </h1>
                 </div>
+            </header>
 
-                {enhancedListings.length > 0 && (
-                    <div className="mb-6 w-full max-w-5xl">
-                        <MapView listings={enhancedListings} center={mapCenter} />
+            <main className="flex flex-grow flex-col">
+                <div className="container mx-auto flex flex-col items-center justify-center px-4 py-8">
+                    {/* Recording Section */}
+                    <div className="mb-8 flex flex-col items-center justify-center">
+                        <div
+                            className={`record-button ${isRecording ? "recording" : ""}`}
+                            onClick={onToggleListening}
+                            aria-label={isRecording ? t("app.stopRecording") : t("app.startRecording")}
+                        >
+                            {isRecording ? <MicOff className="icon" /> : <Mic className="icon" />}
+                        </div>
+                        <StatusMessage isRecording={isRecording} />
                     </div>
-                )}
 
-                {enhancedListings.length > 0 && (
-                    <div className="flex flex-wrap justify-center">
-                        {enhancedListings.map((l, idx) => (
-                            <ListingCard key={idx} listing={l} isBest={l.isBest} />
-                        ))}
-                    </div>
-                )}
+                    {/* Map Section */}
+                    {enhancedListings.length > 0 && (
+                        <div className="mb-8 w-full">
+                            <MapView listings={enhancedListings} center={mapCenter} />
+                        </div>
+                    )}
+
+                    {/* Listings Section */}
+                    {enhancedListings.length > 0 && (
+                        <div className="flex flex-wrap justify-center gap-4">
+                            {enhancedListings.map((l, idx) => (
+                                <ListingCard key={idx} listing={l} isBest={l.isBest} />
+                            ))}
+                        </div>
+                    )}
+                </div>
             </main>
 
-            <footer className="py-4 text-center">
-                <p>{t("app.footer")}</p>
+            <footer className="w-full border-t bg-white py-4">
+                <div className="container mx-auto px-4 text-center">
+                    <p>{t("app.footer")}</p>
+                </div>
             </footer>
         </div>
     );
