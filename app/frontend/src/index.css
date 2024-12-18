@@ -67,6 +67,85 @@
     }
 }
 
+/* Existing tailwind and other styles remain above */
+
+/* Styles for the circular recording toggle button */
+.record-button {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 9999px;
+    background: linear-gradient(90deg, #ff00c8, #8400ff, #ff00c8);
+    background-size: 300% 300%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-position 2s linear;
+    overflow: hidden;
+}
+
+.record-button:hover {
+    background-position: 100% 50%;
+}
+
+.record-button .icon {
+    color: #ffffff;
+    width: 24px;
+    height: 24px;
+}
+
+.record-button.recording {
+    animation: gradient-border 3s linear infinite;
+}
+
+/* Radiating circles when recording */
+.record-button.recording::before,
+.record-button.recording::after {
+    content: "";
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 9999px;
+    background: radial-gradient(rgba(255, 0, 200, 0.3), transparent);
+    opacity: 0;
+    animation: radiate 2s infinite;
+}
+
+.record-button.recording::before {
+    animation-delay: 0s;
+}
+
+.record-button.recording::after {
+    animation-delay: 1s;
+}
+
+@keyframes radiate {
+    0% {
+        transform: scale(0.7);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Existing gradient-border keyframes from before */
+@keyframes gradient-border {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+
+
 @layer base {
     * {
         @apply border-border;

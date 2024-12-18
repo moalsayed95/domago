@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Mic, MicOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-import { Button } from "@/components/ui/button";
 import StatusMessage from "@/components/ui/status-message";
 import useRealTime from "@/hooks/useRealtime";
 import useAudioRecorder from "@/hooks/useAudioRecorder";
@@ -60,7 +59,7 @@ function App() {
     // Mark the first listing as the "best"
     const enhancedListings = listings.map((l, idx) => ({
         ...l,
-        isBest: idx === 0 // add an isBest property for the first listing
+        isBest: idx === 0
     }));
 
     return (
@@ -73,22 +72,15 @@ function App() {
                     {t("app.title")}
                 </h1>
                 <div className="mb-4 flex flex-col items-center justify-center">
-                    <Button
+                    {/* New circular recording toggle button */}
+                    <div
+                        className={`record-button ${isRecording ? "recording" : ""}`}
                         onClick={onToggleListening}
-                        className={`h-12 w-60 ${isRecording ? "bg-red-600 hover:bg-red-700" : "bg-purple-500 hover:bg-purple-600"}`}
                         aria-label={isRecording ? t("app.stopRecording") : t("app.startRecording")}
                     >
-                        {isRecording ? (
-                            <>
-                                <MicOff className="mr-2 h-4 w-4" />
-                                {t("app.stopConversation")}
-                            </>
-                        ) : (
-                            <>
-                                <Mic className="mr-2 h-6 w-6" />
-                            </>
-                        )}
-                    </Button>
+                        {isRecording ? <MicOff className="icon" /> : <Mic className="icon" />}
+                    </div>
+
                     <StatusMessage isRecording={isRecording} />
                 </div>
 

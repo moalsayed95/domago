@@ -33,7 +33,7 @@ export default function MapView({ listings, center }: MapProps) {
 
             // Create custom icons with desired colors
             Promise.all([
-                map.imageSprite.createFromTemplate("marker-purple", "marker", "#9B51E0", "#FFFFFF"),
+                map.imageSprite.createFromTemplate("marker-purple", "marker", "#ff00c8", "#FFFFFF"),
                 map.imageSprite.createFromTemplate("marker-blue", "marker", "#0000FF", "#FFFFFF")
             ]).then(() => {
                 // Create a symbol layer using the custom icons
