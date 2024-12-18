@@ -3,7 +3,7 @@ import { Mic, MicOff, Sun, Moon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import isEqual from "lodash.isequal";
 
-import StatusMessage from "@/components/ui/status-message";
+// import StatusMessage from "@/components/ui/status-message";
 import useRealTime from "@/hooks/useRealtime";
 import useAudioRecorder from "@/hooks/useAudioRecorder";
 import useAudioPlayer from "@/hooks/useAudioPlayer";
