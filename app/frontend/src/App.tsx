@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Mic, MicOff, Sun, Moon } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import isEqual from "lodash.isequal";
 
@@ -117,7 +117,7 @@ function App() {
                         {listings.length > 0 && (
                             <div className="mt-5 w-1/2">
                                 <div className="overflow-hidden rounded-lg">
-                                    <MapView listings={listings} center={mapCenter} />
+                                    <MapView listings={listings} center={mapCenter} highlightedListingId={highlightedListingId} />
                                 </div>
                             </div>
                         )}
