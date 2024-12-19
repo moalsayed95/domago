@@ -85,7 +85,9 @@ function App() {
     const toggleDarkMode = () => setDarkMode(!darkMode);
 
     const { t } = useTranslation();
-    const mapCenter: [number, number] = listings.length > 0 ? [listings[0].lng, listings[0].lat] : [16.3738, 48.2082];
+
+    const defaultCenter: [number, number] = [16.3738, 48.2082]; // Coordinates of Vienna
+    const mapCenter: [number, number] = listings.length > 0 ? [listings[0].lng, listings[0].lat] : defaultCenter;
 
     return (
         <div className="flex min-h-screen flex-col bg-background text-foreground transition-colors dark:bg-foreground dark:text-background">
@@ -114,13 +116,11 @@ function App() {
                             ></div>
                             <StatusMessage isRecording={isRecording} />
                         </div>
-                        {listings.length > 0 && (
-                            <div className="mt-5 w-1/2">
-                                <div className="overflow-hidden rounded-lg">
-                                    <MapView listings={listings} center={mapCenter} highlightedListingId={highlightedListingId} />
-                                </div>
+                        <div className="mt-5 w-1/2">
+                            <div className="overflow-hidden rounded-lg">
+                                <MapView listings={listings} center={mapCenter} highlightedListingId={highlightedListingId} />
                             </div>
-                        )}
+                        </div>
                     </div>
 
                     {listings.length > 0 && (
@@ -132,12 +132,6 @@ function App() {
                     )}
                 </div>
             </main>
-
-            <footer className="w-full border-t bg-white py-4 transition-colors dark:bg-gray-900">
-                <div className="container mx-auto px-4 text-center">
-                    <p>{t("app.footer")}</p>
-                </div>
-            </footer>
         </div>
     );
 }
