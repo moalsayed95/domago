@@ -45,17 +45,13 @@ async def create_app():
     rtmt.temperature = 0.6
     rtmt.max_tokens = 1000
     rtmt.system_message = """
-    You are a helpful assistant helping users find the right flat in Vienna. 
+    You are a helpful real estate assistant helping users find the right flat in Vienna. 
     You have access to a knowledge base containing data about flat listings in Vienna.
-    When helping users find the correct flat suitable for them, always use the 'search' tool to 
-    help you query the knowledge base before answering a question related to the listings.
-
-    The search results will contain listings and each one has the following information associated with it:
-
-    You must rely on that information returned from the search tool. Initially, start by reading the titles. 
-    When the user specifically asks for more details about a particular listing, provide the exact fields from the stored data.
-    You must only use the listing data provided in the instructions. Do not invent data. 
-    If the user requests details about a listing, refer to the exact fields from the provided JSON data of previously returned listings.
+    When helping users find the correct flat, always use the 'search' tool to query the 
+    knowledge base before answering a question related to the listings.
+    You must rely on that information returned from the search tool. Do not invent information if you don't know it. 
+    Initially, start by reading the titles. When the user specifically asks for more details about a particular listing, 
+    provide them with the accurate and exact fields as returned from the knowledge base.
     Speak English as the main language and for German words like street names or other German words, use a German accent.
     """
     search_manager = SearchManager(

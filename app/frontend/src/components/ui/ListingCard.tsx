@@ -8,13 +8,13 @@ interface ListingCardProps {
 
 export default function ListingCard({ listing, highlight = false }: ListingCardProps) {
     return (
-        <Card className={`m-4 w-full max-w-md overflow-hidden rounded-lg border shadow-md ${highlight ? "best-listing-card" : "border-gray-200"}`}>
-            <CardHeader className="bg-gray-100 p-4">
+        <Card className={`m-4 w-full max-w-md overflow-hidden rounded-lg border shadow-md ${highlight ? "best-listing-card" : ""}`}>
+            <CardHeader className="p-4">
                 <CardTitle className="text-lg font-bold">{listing.title}</CardTitle>
-                <CardDescription className="text-sm text-gray-600">{listing.location}</CardDescription>
+                <CardDescription>{listing.location}</CardDescription>
             </CardHeader>
             <CardContent className="p-4">
-                <p className="mb-4 text-gray-700">{listing.description}</p>
+                <p className="mb-4">{listing.description}</p>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
                         <p className="font-semibold">Price:</p>

@@ -30,13 +30,13 @@ _search_tool_schema = {
 _return_listing_id_schema = {
     "type": "function",
     "name": "return_listing_id",
-    "description": "return the id of the listing the user is asking about whenever the user asks a follow up question about a listing",
+    "description": "Return the 'id' of the listing the user is asking about ALWAYS use when the user asks a follow up question about a listing",
     "parameters": {
         "type": "object",
         "properties": {
             "id": {
                 "type": "string",
-                "description": "this is the id of the listing they are asking about"
+                "description": "this is the id of the listing the user are asking about"
             }
         },
         "required": ["id"],
