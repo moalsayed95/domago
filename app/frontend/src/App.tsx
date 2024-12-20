@@ -17,6 +17,9 @@ function App() {
     const [listings, setListings] = useState<Listing[]>([]);
     const [highlightedListingId, setHighlightedListingId] = useState<string | null>(null);
 
+    // This will hold the zoom increment returned by the backend (+1 or -1)
+    const [zoomDelta, setZoomDelta] = useState<number>(0);
+
     const { startSession, addUserAudio, inputAudioBufferClear } = useRealTime({
         onWebSocketOpen: () => console.log("WebSocket connection opened"),
         onWebSocketClose: () => console.log("WebSocket connection closed"),
@@ -44,9 +47,12 @@ function App() {
                         setHighlightedListingId(null);
                     }
                 }
-            } else if (result.id) {
+            } else if (typeof result.id === "string") {
                 // If we only received an id, change highlight to that listing
                 setHighlightedListingId(result.id);
+            } else if (typeof result.zoom === "number") {
+                // If we received a zoom instruction (+1 or -1)
+                setZoomDelta(result.zoom);
             }
         }
     });
@@ -105,14 +111,14 @@ function App() {
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-center text-lg">{t("app.noListingsMessage")}</p>
+                            <p className="text-center text-lg">{t("Search Results")}</p>
                         )}
                     </div>
 
                     {/* Map Section */}
                     <div className="w-1/2 p-4">
                         <div className="flex w-full items-stretch overflow-hidden rounded-lg">
-                            <MapView listings={listings} center={mapCenter} highlightedListingId={highlightedListingId} />
+                            <MapView listings={listings} center={mapCenter} highlightedListingId={highlightedListingId} zoomDelta={zoomDelta} />
                         </div>
                     </div>
                 </div>

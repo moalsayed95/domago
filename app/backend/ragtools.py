@@ -44,6 +44,22 @@ _return_listing_id_schema = {
     }
 }
 
+_zoom_in_or_out_schema = {
+    "type": "function",
+    "name": "zoom_in_or_out",
+    "description": "Return 1 or -1 to zoom in or out of the map",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "zoom": {
+                "type": "integer",
+                "description": "the zoom level to zoom in or out"
+            }
+        },
+        "required": ["zoom"],
+        "additionalProperties": False
+    }
+}
 
 async def _search_tool(
     search_manager, 
@@ -72,7 +88,7 @@ async def _search_tool(
         }
         listings.append(listing)
 
-    # Return the listings as JSON to the frontend
+    # Return the listings list as JSON to the frontend
     return ToolResult({"listings": listings}, ToolResultDirection.TO_CLIENT)
 
 
@@ -82,10 +98,17 @@ async def _return_listing_id_tool(
     # Return the listing id as JSON to the frontend
     return ToolResult({"id": args['id']}, ToolResultDirection.TO_CLIENT)
 
+async def _zoom_in_or_out_tool( 
+    args: Any
+) -> ToolResult:
+    # Return the zoom value (+1 or -1) as JSON to the frontend
+    return ToolResult({"zoom": args['zoom']}, ToolResultDirection.TO_CLIENT)
+
 def attach_rag_tools(rtmt: RTMiddleTier,
     credentials: AzureKeyCredential | DefaultAzureCredential,
     search_manager: SearchManager, 
     ) -> None:
+    
     if not isinstance(credentials, AzureKeyCredential):
         credentials.get_token("https://search.azure.com/.default") # warm this up before we start getting requests
 
@@ -97,4 +120,9 @@ def attach_rag_tools(rtmt: RTMiddleTier,
     rtmt.tools["return_listing_id"] = Tool(
         schema=_return_listing_id_schema, 
         target=lambda args: _return_listing_id_tool(args)
+    )
+
+    rtmt.tools["zoom_in_or_out"] = Tool(
+        schema=_zoom_in_or_out_schema, 
+        target=lambda args: _zoom_in_or_out_tool(args)
     )

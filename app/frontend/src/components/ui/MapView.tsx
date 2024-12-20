@@ -6,9 +6,10 @@ type MapProps = {
     listings: Listing[];
     center: [number, number];
     highlightedListingId: string | null;
+    zoomDelta: number;
 };
 
-export default function MapView({ listings, center, highlightedListingId }: MapProps) {
+export default function MapView({ listings, center, highlightedListingId, zoomDelta }: MapProps) {
     const mapRef = useRef<atlas.Map | null>(null);
     const dataSourceRef = useRef<atlas.source.DataSource | null>(null);
     const symbolLayerRef = useRef<atlas.layer.SymbolLayer | null>(null);
@@ -35,19 +36,13 @@ export default function MapView({ listings, center, highlightedListingId }: MapP
             map.sources.add(datasource);
             dataSourceRef.current = datasource;
 
-            // Create a custom icon for the highlighted listing
-            // This will be a pink-purple marker.
             Promise.all([
                 map.imageSprite.createFromTemplate("marker-purple", "marker", "#ff00c8", "#FFFFFF"),
                 map.imageSprite.createFromTemplate("marker-blue", "marker", "#0000FF", "#FFFFFF"),
                 map.imageSprite.createFromTemplate("marker-highlighted", "marker", "#ff00c8", "#FFFFFF")
             ]).then(() => {
-                // Create a symbol layer using the custom icons
-                // We use a case expression: if id == highlightedListingId, use marker-highlighted, else marker-blue
                 const symbolLayer = new atlas.layer.SymbolLayer(datasource, undefined, {
                     iconOptions: {
-                        // We will check if the listing's id matches highlightedListingId
-                        // If it does, use "marker-highlighted", else "marker-blue"
                         image: ["case", ["==", ["get", "id"], highlightedListingId || ""], "marker-highlighted", "marker-blue"],
                         allowOverlap: true
                     }
@@ -55,7 +50,6 @@ export default function MapView({ listings, center, highlightedListingId }: MapP
                 map.layers.add(symbolLayer);
                 symbolLayerRef.current = symbolLayer;
 
-                // Add initial listings
                 listings.forEach(l => {
                     const feature = new atlas.data.Feature(new atlas.data.Point([l.lng, l.lat]), { id: l.id, title: l.title });
                     datasource.add(feature);
@@ -77,7 +71,7 @@ export default function MapView({ listings, center, highlightedListingId }: MapP
         };
     }, []);
 
-    // Update listings and highlighted marker when they change
+    // Update listings when they change
     useEffect(() => {
         const map = mapRef.current;
         const datasource = dataSourceRef.current;
@@ -91,7 +85,7 @@ export default function MapView({ listings, center, highlightedListingId }: MapP
         }
     }, [listings]);
 
-    // Update highlighted marker icon condition
+    // Update highlighted marker icon when highlightedListingId changes
     useEffect(() => {
         const map = mapRef.current;
         const symbolLayer = symbolLayerRef.current;
@@ -106,7 +100,7 @@ export default function MapView({ listings, center, highlightedListingId }: MapP
         }
     }, [highlightedListingId]);
 
-    // Zoom to the highlighted listing
+    // Zoom to the highlighted listing when it changes
     useEffect(() => {
         const map = mapRef.current;
         if (map && highlightedListingId && listings.length > 0) {
@@ -121,6 +115,31 @@ export default function MapView({ listings, center, highlightedListingId }: MapP
             }
         }
     }, [highlightedListingId, listings]);
+
+    // Handle zoom in/out changes
+    useEffect(() => {
+        const map = mapRef.current;
+        if (map && zoomDelta !== 0) {
+            const camera = map.getCamera();
+            const newZoom = (camera.zoom || 12) + zoomDelta;
+
+            // Keep same center (preferably centered on highlighted listing if available)
+            let centerToUse = camera.center;
+            if (highlightedListingId) {
+                const targetListing = listings.find(l => l.id === highlightedListingId);
+                if (targetListing) {
+                    centerToUse = [targetListing.lng, targetListing.lat];
+                }
+            }
+
+            map.setCamera({
+                center: centerToUse,
+                zoom: newZoom,
+                type: "ease",
+                duration: 500
+            });
+        }
+    }, [zoomDelta, listings, highlightedListingId]);
 
     return <div ref={mapContainerRef} style={{ width: "100%", height: "500px" }} />;
 }

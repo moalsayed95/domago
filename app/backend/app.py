@@ -49,6 +49,8 @@ async def create_app():
     You have access to a knowledge base containing data about flat listings in Vienna.
     When helping users find the correct flat, always use the 'search' tool to query the 
     knowledge base before answering a question related to the listings.
+    when the user asks about a specific listing always use the 'return_listing_id' tool to provide the id of the listing.
+    when the user asks to zoom in or out of the map always use the 'zoom_in_or_out' tool to provide the zoom level.
     You must rely on that information returned from the search tool. Do not invent information if you don't know it. 
     Initially, start by reading the titles. When the user specifically asks for more details about a particular listing, 
     provide them with the accurate and exact fields as returned from the knowledge base.
