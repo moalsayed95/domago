@@ -16,34 +16,35 @@ export default function ListingCard({ listing, highlight = false }: ListingCardP
             </CardHeader>
             <CardContent className="bg-white p-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="flex items-center">
-                        <Euro className="mr-2 text-gray-700" />
-                        <span className="font-semibold">Price</span>
-                        <span className="ml-auto">€{listing.price.toLocaleString()}</span>
+                    <div className="flex items-center space-x-2">
+                        <Euro className="text-gray-700" />
+                        <span className="font-semibold">Price:</span>
+                        <span>€{listing.price.toLocaleString()}</span>
                     </div>
-                    <div className="flex items-center">
-                        <Bed className="mr-2 text-gray-700" />
-                        <span className="font-semibold">Rooms</span>
-                        <span className="ml-auto">{listing.rooms}</span>
+                    <div className="flex items-center space-x-2">
+                        <Bed className="text-gray-700" />
+                        <span className="font-semibold">Rooms:</span>
+                        <span>{listing.rooms}</span>
                     </div>
-                    <div className="flex items-center">
-                        <Ruler className="mr-2 text-gray-700" />
-                        <span className="font-semibold">Size</span>
-                        <span className="ml-auto">{listing.size} m²</span>
+                    <div className="flex items-center space-x-2">
+                        <Ruler className="text-gray-700" />
+                        <span className="font-semibold">Size:</span>
+                        <span>{listing.size} m²</span>
                     </div>
-                    <div className="flex items-center">
-                        <Home className="mr-2 text-gray-700" />
-                        <span className="font-semibold">Floor</span>
-                        <span className="ml-auto">{listing.floor}</span>
+                    <div className="flex items-center space-x-2">
+                        <Home className="text-gray-700" />
+                        <span className="font-semibold">Floor:</span>
+                        <span>{listing.floor}</span>
                     </div>
-                    <div className="flex items-center">
-                        <Calendar className="mr-2 text-gray-700" />
-                        <span className="font-semibold">Availability</span>
-                        <span className="ml-auto">{listing.availability}</span>
+                    <div className="flex items-center space-x-2">
+                        <Calendar className="text-gray-700" />
+                        <span className="font-semibold">Availability:</span>
+                        <span>{listing.availability}</span>
                     </div>
-                    <div className="flex items-center">
-                        <Phone className="mr-2 text-gray-700" />
-                        <span className="ml-auto">{listing.contact}</span>
+                    <div className="flex items-center space-x-2">
+                        <Phone className="text-gray-700" />
+                        <span className="font-semibold">Contact:</span>
+                        <span>{listing.contact}</span>
                     </div>
                 </div>
             </CardContent>
