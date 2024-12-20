@@ -1,6 +1,6 @@
 {
     "app": {
-        "title": "Microsoft Real Estate Assistant",
+        "title": "Domagoj - Real Estate Assistant",
         "footer": "Built with Azure AI Search + Azure OpenAI",
         "stopRecording": "Stop recording",
         "startRecording": "Start recording",

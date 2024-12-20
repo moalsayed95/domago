@@ -1,5 +1,6 @@
 import { Listing } from "@/types";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "./card";
+import { Home, Bed, Ruler, Calendar, Phone, Euro } from "lucide-react";
 
 interface ListingCardProps {
     listing: Listing;
@@ -8,37 +9,41 @@ interface ListingCardProps {
 
 export default function ListingCard({ listing, highlight = false }: ListingCardProps) {
     return (
-        <Card className={`m-4 w-full max-w-md overflow-hidden rounded-lg border shadow-md ${highlight ? "best-listing-card" : ""}`}>
+        <Card className={`mx-4 my-2 w-full max-w-lg overflow-hidden rounded-lg border shadow-md ${highlight ? "best-listing-card" : ""}`}>
             <CardHeader className="p-4">
                 <CardTitle className="text-lg font-bold">{listing.title}</CardTitle>
                 <CardDescription>{listing.location}</CardDescription>
             </CardHeader>
-            <CardContent className="p-4">
-                <p className="mb-4">{listing.description}</p>
+            <CardContent className="bg-white p-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                        <p className="font-semibold">Price:</p>
-                        <p>€{listing.price.toLocaleString()}</p>
+                    <div className="flex items-center">
+                        <Euro className="mr-2 text-gray-700" />
+                        <span className="font-semibold">Price</span>
+                        <span className="ml-auto">€{listing.price.toLocaleString()}</span>
                     </div>
-                    <div>
-                        <p className="font-semibold">Rooms:</p>
-                        <p>{listing.rooms}</p>
+                    <div className="flex items-center">
+                        <Bed className="mr-2 text-gray-700" />
+                        <span className="font-semibold">Rooms</span>
+                        <span className="ml-auto">{listing.rooms}</span>
                     </div>
-                    <div>
-                        <p className="font-semibold">Size:</p>
-                        <p>{listing.size} m²</p>
+                    <div className="flex items-center">
+                        <Ruler className="mr-2 text-gray-700" />
+                        <span className="font-semibold">Size</span>
+                        <span className="ml-auto">{listing.size} m²</span>
                     </div>
-                    <div>
-                        <p className="font-semibold">Floor:</p>
-                        <p>{listing.floor}</p>
+                    <div className="flex items-center">
+                        <Home className="mr-2 text-gray-700" />
+                        <span className="font-semibold">Floor</span>
+                        <span className="ml-auto">{listing.floor}</span>
                     </div>
-                    <div>
-                        <p className="font-semibold">Availability:</p>
-                        <p>{listing.availability}</p>
+                    <div className="flex items-center">
+                        <Calendar className="mr-2 text-gray-700" />
+                        <span className="font-semibold">Availability</span>
+                        <span className="ml-auto">{listing.availability}</span>
                     </div>
-                    <div>
-                        <p className="font-semibold">Contact:</p>
-                        <p>{listing.contact}</p>
+                    <div className="flex items-center">
+                        <Phone className="mr-2 text-gray-700" />
+                        <span className="ml-auto">{listing.contact}</span>
                     </div>
                 </div>
             </CardContent>

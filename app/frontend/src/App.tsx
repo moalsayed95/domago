@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { Sun, Moon } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import isEqual from "lodash.isequal";
 
@@ -16,9 +15,6 @@ import StatusMessage from "@/components/ui/status-message";
 function App() {
     const [isRecording, setIsRecording] = useState(false);
     const [listings, setListings] = useState<Listing[]>([]);
-    const [darkMode, setDarkMode] = useState(() => {
-        return localStorage.getItem("theme") === "dark";
-    });
     const [highlightedListingId, setHighlightedListingId] = useState<string | null>(null);
 
     const { startSession, addUserAudio, inputAudioBufferClear } = useRealTime({
@@ -58,16 +54,6 @@ function App() {
     const { reset: resetAudioPlayer, play: playAudio, stop: stopAudioPlayer } = useAudioPlayer();
     const { start: startAudioRecording, stop: stopAudioRecording } = useAudioRecorder({ onAudioRecorded: addUserAudio });
 
-    useEffect(() => {
-        if (darkMode) {
-            document.documentElement.classList.add("dark");
-            localStorage.setItem("theme", "dark");
-        } else {
-            document.documentElement.classList.remove("dark");
-            localStorage.setItem("theme", "light");
-        }
-    }, [darkMode]);
-
     const onToggleListening = async () => {
         if (!isRecording) {
             startSession();
@@ -82,8 +68,6 @@ function App() {
         }
     };
 
-    const toggleDarkMode = () => setDarkMode(!darkMode);
-
     const { t } = useTranslation();
 
     const defaultCenter: [number, number] = [16.3738, 48.2082]; // Coordinates of Vienna
@@ -92,44 +76,45 @@ function App() {
     return (
         <div className="flex min-h-screen flex-col bg-background text-foreground transition-colors dark:bg-foreground dark:text-background">
             <header className="w-full border-b bg-white py-4 transition-colors dark:bg-gray-900">
-                <div className="container mx-auto flex flex-col gap-4 px-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-4">
-                        <img src={logo} alt="Azure logo" className="h-12 w-12" />
-                        <h1 className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-center text-3xl font-bold text-transparent sm:text-left md:text-5xl">
+                <div className="container mx-auto flex flex-row items-center justify-between px-4">
+                    <div className="flex items-center gap-3">
+                        <img src={logo} alt="Azure logo" className="h-10 w-10" />
+                        <h1 className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-2xl font-bold text-transparent sm:text-4xl">
                             {t("app.title")}
                         </h1>
                     </div>
-                    <button onClick={toggleDarkMode} aria-label="Toggle Dark Mode" className="rounded-full bg-gray-200 p-2 transition-colors dark:bg-gray-700">
-                        {darkMode ? <Sun className="text-yellow-400" /> : <Moon className="text-gray-800 dark:text-gray-300" />}
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <StatusMessage isRecording={isRecording} />
+                        <div
+                            className={`record-button ${isRecording ? "recording" : ""}`}
+                            onClick={onToggleListening}
+                            aria-label={isRecording ? t("app.stopRecording") : t("app.startRecording")}
+                        ></div>
+                    </div>
                 </div>
             </header>
 
-            <main className="flex flex-grow flex-col">
-                <div className="container mx-auto flex flex-col items-center justify-center px-4">
-                    <div className="mb-8 flex w-full">
-                        <div className="flex w-1/2 flex-col items-center justify-center space-y-5">
-                            <div
-                                className={`record-button ${isRecording ? "recording" : ""}`}
-                                onClick={onToggleListening}
-                                aria-label={isRecording ? t("app.stopRecording") : t("app.startRecording")}
-                            ></div>
-                            <StatusMessage isRecording={isRecording} />
-                        </div>
-                        <div className="mt-5 w-1/2">
-                            <div className="overflow-hidden rounded-lg">
-                                <MapView listings={listings} center={mapCenter} highlightedListingId={highlightedListingId} />
+            <main className="flex flex-grow flex-row justify-center">
+                <div className="container mx-auto flex flex-row">
+                    {/* Listings Section */}
+                    <div className="w-1/2 overflow-y-auto p-4">
+                        {listings.length > 0 ? (
+                            <div className="flex flex-wrap justify-center gap-4">
+                                {listings.map(l => (
+                                    <ListingCard key={l.id} listing={l} highlight={highlightedListingId === l.id} />
+                                ))}
                             </div>
-                        </div>
+                        ) : (
+                            <p className="text-center text-lg">{t("app.noListingsMessage")}</p>
+                        )}
                     </div>
 
-                    {listings.length > 0 && (
-                        <div className="flex flex-wrap justify-center gap-4">
-                            {listings.map(l => (
-                                <ListingCard key={l.id} listing={l} highlight={highlightedListingId === l.id} />
-                            ))}
+                    {/* Map Section */}
+                    <div className="w-1/2 p-4">
+                        <div className="flex w-full items-stretch overflow-hidden rounded-lg">
+                            <MapView listings={listings} center={mapCenter} highlightedListingId={highlightedListingId} />
                         </div>
-                    )}
+                    </div>
                 </div>
             </main>
         </div>

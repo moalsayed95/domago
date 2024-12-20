@@ -76,8 +76,8 @@
 /* Styles for the circular recording toggle button */
 .record-button {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 50px;
+    height: 50px;
     border-radius: 9999px;
     background: linear-gradient(90deg, #ff00c8, #8400ff, #ff00c8);
     background-size: 300% 300%;
@@ -166,11 +166,6 @@
     padding: 6px;
     background: linear-gradient(90deg, #ff00c8, #8400ff, #ff00c8);
     background-size: 300% 300%;
-}
-
-.best-listing-card,
-.border-gray-200 {
-    max-width: 450px;
 }
 
 @keyframes gradient-border {
