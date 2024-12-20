@@ -104,6 +104,7 @@ function App() {
                 <div className="container mx-auto flex flex-row">
                     {/* Listings Section */}
                     <div className="w-1/2 overflow-y-auto p-4">
+                        <h2 className="mb-4 text-2xl font-bold">{t("Available Listings")}</h2>
                         {listings.length > 0 ? (
                             <div className="flex flex-wrap justify-center gap-4">
                                 {listings.map(l => (
@@ -111,7 +112,7 @@ function App() {
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-center text-lg">{t("Search Results")}</p>
+                            <p className="text-center text-lg">{t("No listings found")}</p>
                         )}
                     </div>
 

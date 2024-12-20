@@ -1,6 +1,6 @@
 import { Listing } from "@/types";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "./card";
-import { Home, Bed, Ruler, Calendar, Phone, Euro } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card";
+import { Home, Bed, Ruler, Calendar, Phone, Euro, MapPin } from "lucide-react";
 
 interface ListingCardProps {
     listing: Listing;
@@ -9,10 +9,13 @@ interface ListingCardProps {
 
 export default function ListingCard({ listing, highlight = false }: ListingCardProps) {
     return (
-        <Card className={`mx-4 my-2 w-full max-w-lg overflow-hidden rounded-lg border shadow-md ${highlight ? "best-listing-card" : ""}`}>
+        <Card className={`mx-4 my-1 w-full max-w-lg overflow-hidden rounded-lg border shadow-md ${highlight ? "best-listing-card" : ""}`}>
             <CardHeader className="p-4">
                 <CardTitle className="text-lg font-bold">{listing.title}</CardTitle>
-                <CardDescription>{listing.location}</CardDescription>
+                <CardDescription>
+                    <MapPin className="mr-2 inline-block text-gray-700" />
+                    {listing.location}
+                </CardDescription>
             </CardHeader>
             <CardContent className="bg-white p-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -41,13 +44,15 @@ export default function ListingCard({ listing, highlight = false }: ListingCardP
                         <span className="font-semibold">Availability:</span>
                         <span>{listing.availability}</span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <Phone className="text-gray-700" />
-                        <span className="font-semibold">Contact:</span>
-                        <span>{listing.contact}</span>
-                    </div>
                 </div>
             </CardContent>
+            <CardFooter className="p-4">
+                <div className="flex items-center space-x-2">
+                    <Phone className="text-gray-700" />
+                    <span className="font-semibold">Contact:</span>
+                    <span>{listing.contact}</span>
+                </div>
+            </CardFooter>
         </Card>
     );
 }
