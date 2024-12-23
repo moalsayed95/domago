@@ -112,7 +112,7 @@ function App() {
                             onClick={onToggleListening}
                             aria-label={isRecording ? t("app.stopRecording") : t("app.startRecording")}
                         >
-                            {isRecording ? <MicOff className="icon" /> : <Mic className="icon" />}
+                            {isRecording ? <Mic className="icon" /> : <MicOff className="icon" />}
                         </div>
                     </div>
                 </div>
