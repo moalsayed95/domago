@@ -4,7 +4,6 @@
 
 :root {
     font-family: "Segoe UI", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -39,6 +38,7 @@
         --chart-5: 27 87% 67%;
         --radius: 0.5rem;
     }
+
     .dark {
         --background: 0 0% 3.9%;
         --foreground: 0 0% 98%;
@@ -67,17 +67,17 @@
     }
 }
 
+/* Make sure map container is fully responsive in its column */
 .map-container > div {
     width: 100%;
     height: 100%;
-    border-radius: 20px;
 }
 
-/* Styles for the circular recording toggle button */
+/* Recording Circle Button */
 .record-button {
     position: relative;
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     border-radius: 9999px;
     background: linear-gradient(90deg, #ff00c8, #8400ff, #ff00c8);
     background-size: 300% 300%;
@@ -95,8 +95,8 @@
 
 .record-button .icon {
     color: #ffffff;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
 }
 
 .record-button.recording {
@@ -108,8 +108,8 @@
 .record-button.recording::after {
     content: "";
     position: absolute;
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 9999px;
     background: radial-gradient(rgba(255, 0, 200, 0.3), transparent);
     opacity: 0;
@@ -135,7 +135,7 @@
     }
 }
 
-/* Existing gradient-border keyframes from before */
+/* Gradient Border for the highlighted listing card */
 @keyframes gradient-border {
     0% {
         background-position: 0% 50%;
@@ -148,40 +148,26 @@
     }
 }
 
-@layer base {
-    * {
-        @apply border-border;
-    }
-    body {
-        @apply bg-background text-foreground;
-    }
-}
-
-/* Gradient border animation for the best listing card */
 .best-listing-card {
     position: relative;
     border: none;
     animation: gradient-border 3s linear infinite;
     border-radius: 0.5rem;
-    padding: 6px;
+    padding: 3px;
     background: linear-gradient(90deg, #ff00c8, #8400ff, #ff00c8);
     background-size: 300% 300%;
 }
 
-@keyframes gradient-border {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
-/* Inner content of the card should not be affected by the gradient border background */
 .best-listing-card > * {
     background: #fff;
     border-radius: 0.5rem;
+}
+
+/* Simple Utility Classes */
+.border-b-0 {
+    border-bottom-width: 0 !important;
+}
+
+.border-r {
+    border-right-width: 1px;
 }
