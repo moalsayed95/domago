@@ -87,8 +87,9 @@ npm run dev
 ```
 
 both the frontend and backend servers should be running for the app to work.
+
 ## Interactive voice commands:
 - `I am looking for a flat in the city center show me some options`
-- `I like this flat (say the flat's title and as for more details)`
+- `I like this flat (say the flat's title and ask for more details)`
 - `I like this flat (say the flat's title) could you add it to my favorites`
 - `I like this flat (say the flat's title) could you zoom in on the map`
