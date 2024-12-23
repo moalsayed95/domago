@@ -1,12 +1,8 @@
-import re
 from typing import Any
-import os
 
 from search_manager import SearchManager
 from azure.core.credentials import AzureKeyCredential
 from azure.identity import DefaultAzureCredential
-from azure.search.documents.aio import SearchClient
-from azure.search.documents.models import VectorizableTextQuery
 
 from rtmt import RTMiddleTier, Tool, ToolResult, ToolResultDirection
 
@@ -61,6 +57,47 @@ _zoom_in_or_out_schema = {
     }
 }
 
+
+_add_or_remove_from_favorites_schema = {
+    "type": "function",
+    "name": "add_or_remove_from_favorites",
+    "description": "Add or remove a listing from the user's favorites by returning its id and the action",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "id": {
+                "type": "string",
+                "description": "the id of the listing to add or remove from favorites"
+            },
+            "action": {
+                "type": "string",
+                "description": "either 'add' or 'remove'",
+                "enum": ["add", "remove"]
+            }
+        },
+        "required": ["id", "action"],
+        "additionalProperties": False
+    }
+}
+
+
+_navigate_page_schema = {
+    "type": "function",
+    "name": "navigate_page",
+    "description": "Return the page the user should navigate to. For example 'favorites' or 'main'",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "page": {
+                "type": "string",
+                "description": "The page to navigate to (e.g. 'favorites' or 'main')"
+            }
+        },
+        "required": ["page"],
+        "additionalProperties": False
+    }
+}
+
 async def _search_tool(
     search_manager, 
     args: Any
@@ -82,7 +119,7 @@ async def _search_tool(
             "rooms": r.get("rooms", 0),
             "size": r.get("size", 0),
             "floor": r.get("floor", 0),
-            "availability": r.get("available_from", ""),
+            "availability": r.get("availability", ""),
             "lat": r.get("lat", 0.0),
             "lng": r.get("lng", 0.0),
         }
@@ -103,6 +140,18 @@ async def _zoom_in_or_out_tool(
 ) -> ToolResult:
     # Return the zoom value (+1 or -1) as JSON to the frontend
     return ToolResult({"zoom": args['zoom']}, ToolResultDirection.TO_CLIENT)
+
+async def _add_or_remove_from_favorites_tool(args: Any) -> ToolResult:
+    return ToolResult({
+        "favorite_id": args['id'],
+        "favorite_action": args['action']
+    }, ToolResultDirection.TO_CLIENT)
+
+
+async def _navigate_page_tool(args: Any) -> ToolResult:
+    # Return the requested page to navigate to
+    return ToolResult({"navigate_to": args['page']}, ToolResultDirection.TO_CLIENT)
+
 
 def attach_rag_tools(rtmt: RTMiddleTier,
     credentials: AzureKeyCredential | DefaultAzureCredential,
@@ -125,4 +174,14 @@ def attach_rag_tools(rtmt: RTMiddleTier,
     rtmt.tools["zoom_in_or_out"] = Tool(
         schema=_zoom_in_or_out_schema, 
         target=lambda args: _zoom_in_or_out_tool(args)
+    )
+
+    rtmt.tools["add_or_remove_from_favorites"] = Tool(
+        schema=_add_or_remove_from_favorites_schema,
+        target=lambda args: _add_or_remove_from_favorites_tool(args)
+    )
+
+    rtmt.tools["navigate_page"] = Tool(
+        schema=_navigate_page_schema,
+        target=lambda args: _navigate_page_tool(args)
     )

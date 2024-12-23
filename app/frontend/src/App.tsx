@@ -11,14 +11,18 @@ import logo from "./assets/logo.svg";
 import ListingCard from "./components/ui/ListingCard";
 import MapView from "./components/ui/MapView";
 import StatusMessage from "@/components/ui/status-message";
+import { Mic, MicOff } from "lucide-react";
 
 function App() {
+    const { t } = useTranslation();
     const [isRecording, setIsRecording] = useState(false);
     const [listings, setListings] = useState<Listing[]>([]);
     const [highlightedListingId, setHighlightedListingId] = useState<string | null>(null);
-
-    // This will hold the zoom increment returned by the backend (+1 or -1)
     const [zoomDelta, setZoomDelta] = useState<number>(0);
+
+    // New states for favorites and page navigation
+    const [favorites, setFavorites] = useState<string[]>([]);
+    const [page, setPage] = useState<"main" | "favorites">("main");
 
     const { startSession, addUserAudio, inputAudioBufferClear } = useRealTime({
         onWebSocketOpen: () => console.log("WebSocket connection opened"),
@@ -35,7 +39,7 @@ function App() {
             console.log("Received tool response", message);
             const result = JSON.parse(message.tool_result);
 
-            // If we have new listings, update them and highlight the first one
+            // Update listings if provided
             if (result.listings) {
                 const newListings = result.listings;
                 if (!isEqual(listings, newListings)) {
@@ -48,11 +52,22 @@ function App() {
                     }
                 }
             } else if (typeof result.id === "string") {
-                // If we only received an id, change highlight to that listing
+                // Just highlight a listing if id is provided
                 setHighlightedListingId(result.id);
             } else if (typeof result.zoom === "number") {
-                // If we received a zoom instruction (+1 or -1)
                 setZoomDelta(result.zoom);
+            } else if (typeof result.favorite_id === "string") {
+                setFavorites(prev => {
+                    // If ID is already in favorites, remove it
+                    if (prev.includes(result.favorite_id)) {
+                        return prev.filter(item => item !== result.favorite_id);
+                    }
+                    // If not in favorites, add it
+                    return [...prev, result.favorite_id];
+                });
+            } else if (typeof result.navigate_to === "string") {
+                const destination = result.navigate_to as "main" | "favorites";
+                setPage(destination);
             }
         }
     });
@@ -74,10 +89,11 @@ function App() {
         }
     };
 
-    const { t } = useTranslation();
-
     const defaultCenter: [number, number] = [16.3738, 48.2082]; // Coordinates of Vienna
     const mapCenter: [number, number] = listings.length > 0 ? [listings[0].lng, listings[0].lat] : defaultCenter;
+
+    // Determine which listings to show based on the current page
+    const displayedListings = page === "favorites" ? listings.filter(l => favorites.includes(l.id)) : listings;
 
     return (
         <div className="flex min-h-screen flex-col bg-background text-foreground transition-colors dark:bg-foreground dark:text-background">
@@ -95,7 +111,9 @@ function App() {
                             className={`record-button ${isRecording ? "recording" : ""}`}
                             onClick={onToggleListening}
                             aria-label={isRecording ? t("app.stopRecording") : t("app.startRecording")}
-                        ></div>
+                        >
+                            {isRecording ? <MicOff className="icon" /> : <Mic className="icon" />}
+                        </div>
                     </div>
                 </div>
             </header>
@@ -104,22 +122,22 @@ function App() {
                 <div className="container mx-auto flex flex-row">
                     {/* Listings Section */}
                     <div className="w-1/2 overflow-y-auto p-4">
-                        <h2 className="mb-4 text-2xl font-bold">{t("Available Listings")}</h2>
-                        {listings.length > 0 ? (
+                        <h2 className="mb-4 text-2xl font-bold">{page === "favorites" ? t("Your Favorites") : t("Available Listings")}</h2>
+                        {displayedListings.length > 0 ? (
                             <div className="flex flex-wrap justify-center gap-4">
-                                {listings.map(l => (
-                                    <ListingCard key={l.id} listing={l} highlight={highlightedListingId === l.id} />
+                                {displayedListings.map(l => (
+                                    <ListingCard key={l.id} listing={l} highlight={highlightedListingId === l.id} isFavorite={favorites.includes(l.id)} />
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-center text-lg">{t("No listings found")}</p>
+                            <p className="text-center text-lg">{page === "favorites" ? t("No favorites yet.") : t("No listings found.")}</p>
                         )}
                     </div>
 
                     {/* Map Section */}
                     <div className="w-1/2 p-4">
                         <div className="flex w-full items-stretch overflow-hidden rounded-lg">
-                            <MapView listings={listings} center={mapCenter} highlightedListingId={highlightedListingId} zoomDelta={zoomDelta} />
+                            <MapView listings={displayedListings} center={mapCenter} highlightedListingId={highlightedListingId} zoomDelta={zoomDelta} />
                         </div>
                     </div>
                 </div>

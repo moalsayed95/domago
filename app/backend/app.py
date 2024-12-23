@@ -52,6 +52,8 @@ async def create_app():
     1- 'search' tool:  helps you query the knowledge base for flat listings.
     2- 'return_listing_id' tool: helps you provide the id of the listing the user is asking about.
     3- 'zoom_in_or_out' tool: helps you zoom in or out of the map.
+    4- 'add_or_remove_from_favorites' tool: helps you add or remove a listing to the user's favorites.
+    5- 'navigate_page' tool: helps you navigate to the page the user is requesting to navigate to.
     
     You must rely on that information returned from the search tool. Do not invent information. 
     When you retrieve listings fromt he knowledge base Only list the titles and locations to the user. 

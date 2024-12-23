@@ -133,9 +133,20 @@ if __name__ == "__main__":
         index_name=os.getenv("AZURE_SEARCH_INDEX"),
         embedding_model="text-embedding-3-large"
     )
-    results = asyncio.run(search_manager.search_by_embedding("stlyiii", k=5))
+
+    # search by embedding
+    # results = asyncio.run(search_manager.search_by_embedding("stlyiii", k=5))
+    # for r in results:
+    #     print("---------------------------------------------")
+    #     print(f"Title: {r['title']}")
+    #     print(f"Description: {r['description']}")
+    #     print(f"Location: {r['location']}")
+
+    # example of search by filters
+    results = asyncio.run(search_manager.search_by_filters(location="Seattle", max_price=2000.0))
     for r in results:
-        print(r["title"])
-        print(r["description"])
-        print(r["location"])
+        print("---------------------------------------------")
+        print(f"Title: {r['title']}")
+        print(f"Description: {r['description']}")
+        print(f"Location: {r['location']}")
 

@@ -1,21 +1,25 @@
 import { Listing } from "@/types";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./card";
-import { Home, Bed, Ruler, Calendar, Phone, Euro, MapPin } from "lucide-react";
+import { Home, Bed, Ruler, Calendar, Phone, Euro, MapPin, Heart } from "lucide-react";
 
 interface ListingCardProps {
     listing: Listing;
     highlight?: boolean;
+    isFavorite?: boolean;
 }
 
-export default function ListingCard({ listing, highlight = false }: ListingCardProps) {
+export default function ListingCard({ listing, highlight = false, isFavorite = false }: ListingCardProps) {
     return (
         <Card className={`mx-4 my-1 w-full max-w-lg overflow-hidden rounded-lg border shadow-md ${highlight ? "best-listing-card" : ""}`}>
-            <CardHeader className="p-4">
-                <CardTitle className="text-lg font-bold">{listing.title}</CardTitle>
-                <CardDescription>
-                    <MapPin className="mr-2 inline-block text-gray-700" />
-                    {listing.location}
-                </CardDescription>
+            <CardHeader className="flex items-center justify-between p-4">
+                <div>
+                    <CardTitle className="text-lg font-bold">{listing.title}</CardTitle>
+                    <CardDescription>
+                        <MapPin className="mr-2 inline-block text-gray-700" />
+                        {listing.location}
+                    </CardDescription>
+                </div>
+                <Heart className={`cursor-pointer ${isFavorite ? "fill-current text-pink-500" : "text-gray-400"}`} />
             </CardHeader>
             <CardContent className="bg-white p-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
