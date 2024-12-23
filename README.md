@@ -64,7 +64,29 @@ pip install -r requirements.txt
 
 5. Deploy `gpt-4o-realtime-preview` in the Azure OpenAI Service.
 
+6. Run the backend server.
 
+```bash
+cd app/backend
+```
+
+```bash
+python app.py
+```
+
+7. Run the frontend server.
+
+```bash
+cd app/frontend
+```
+```bash
+npm install
+```
+```bash
+npm run dev
+```
+
+both the frontend and backend servers should be running for the app to work.
 ## Interactive voice commands:
 - `I am looking for a flat in the city center show me some options`
 - `I like this flat (say the flat's title and as for more details)`
