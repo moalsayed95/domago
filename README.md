@@ -2,6 +2,9 @@
 
 An interactive way to search flats in Vienna using Microsoft AI services.
 
+## Screenshot
+
+![Screenshot of domago](ui\v1.png)
 
 ## Prerequisites
 - Azure reosources:
