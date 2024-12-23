@@ -23,20 +23,7 @@ git clone https://github.com/moalsayed95/domago.git
 
 3. in the root directory of the backend project, use `.env.template` and rename it to `.env` and fill the env variables with the values from your Azure resources.
 
-4. create a python environment and install the required packages for the backend.
-
-```bash
-python -m venv venv
-```
-
-```bash
-cd app/backend
-```
-```bash
-pip install -r requirements.txt
-```
-
-4. Create the AI search Index and index the dummy data from the `data` folder. The data folder has the flats data in JSON format `data/flat_cata.json`. You can do this by running the `index_manager.py` script in the backend project.
+3. Create the AI search Index and index the dummy data from the `data` folder. The data folder has the flats data in JSON format `data/flat_cata.json`. You can do this by running the `index_manager.py` script in the backend project.
 
 Example Data:  
 ```json
@@ -61,6 +48,19 @@ Example Data:
     "deposit": 2000
   }
 ```	
+
+4. create a python environment and install the required packages for the backend.
+
+```bash
+python -m venv venv
+```
+
+```bash
+cd app/backend
+```
+```bash
+pip install -r requirements.txt
+```
 
 5. Deploy `gpt-4o-realtime-preview` in the Azure OpenAI Service.
 
