@@ -151,7 +151,7 @@ class RTMiddleTier:
                         message["response"]["output"] = [
                             o for o in message["response"]["output"]
                             if o.get("type") != "function_call"]
-                        print(f"Filtered Items Count: {original_length - len(message["response"]["output"])}")
+                        # print(f"Filtered Items Count: {original_length - len(message["response"]["output"])}")
                         updated_message = json.dumps(message)                       
 
         return updated_message
