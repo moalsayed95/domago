@@ -52,8 +52,11 @@ Example Data:
 4. create a python environment and install the required packages for the backend.
 
 ```bash
-python -m venv venv
+python -m venv .venv
 ```
+
+```bash
+source .venv/bin/activate
 
 ```bash
 cd app/backend
