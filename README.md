@@ -52,19 +52,7 @@ Example Data:
 4. create a python environment and install the required packages for the backend.
 
 ```bash
-python -m venv .venv
-```
-
-```bash
-source .venv/bin/activate
-```
-
-```bash
-cd app/backend
-```
-
-```bash
-pip install -r requirements.txt
+python -m venv .venv && source .venv/bin/activate && cd app/backend && pip install -r requirements.txt
 ```
 
 5. Deploy `gpt-4o-realtime-preview` in the Azure OpenAI Service.
