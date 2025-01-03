@@ -123,7 +123,7 @@ resource aiCognitiveServicesDeployment 'Microsoft.CognitiveServices/accounts/dep
   }
   sku: {
     name: 'GlobalStandard'
-    capacity: 100
+    capacity: 2
   }
 }
 
