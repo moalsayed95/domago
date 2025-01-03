@@ -1,0 +1,17 @@
+streamlit
+speechrecognition
+pyaudio
+aiohttp==3.9.3
+azure-identity==1.18.0
+azure-search-documents==11.6.0b4
+python-dotenv==1.0.1
+azure-storage-blob==12.23.1
+azure-cognitiveservices-speech
+openai
+chainlit==1.3.0rc1
+openai
+beautifulsoup4
+lxml
+python-dotenv
+websockets
+aiohttp
