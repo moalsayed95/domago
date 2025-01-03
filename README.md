@@ -57,6 +57,7 @@ python -m venv .venv
 
 ```bash
 source .venv/bin/activate
+```
 
 ```bash
 cd app/backend

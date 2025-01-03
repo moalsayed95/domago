@@ -17,8 +17,8 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip3 install --user -r requirements.txt && npm install", 
+	// Use 'postCreateCommand' to run commands after the container is created. 
+	"postCreateCommand": "pip3 install --user -r requirements.txt && rm -rf node_modules package-lock.json && npm install", 
 
 	// Configure tool-specific properties.
 	"customizations": {
