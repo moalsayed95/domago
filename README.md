@@ -21,9 +21,9 @@ git clone https://github.com/moalsayed95/domago.git
 
 2. Create the Azure Services listed above.
 
-3. in the root directory of the backend project, use `.env.template` and rename it to `.env` and fill the env variables with the values from your Azure resources.
+3. in the root directory of the backend project, use `.env.template` and rename it to `.env` and fill the env variables with the values from your Azure resources. In addition, in the root directory of the frontend project, use `.env.template` and rename it to `.env` and fill the env variables with the values from your Azure resources.
 
-3. Create the AI search Index and index the dummy data from the `data` folder. The data folder has the flats data in JSON format `data/flat_cata.json`. You can do this by running the `index_manager.py` script in the backend project.
+4. Create the AI search Index and index the dummy data from the `data` folder. The data folder has the flats data in JSON format `data/flat_cata.json`. You can do this by running the `index_manager.py` script in the backend project.
 
 Example Data:  
 ```json
