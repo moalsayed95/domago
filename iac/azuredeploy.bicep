@@ -127,25 +127,6 @@ resource aiCognitiveServicesDeployment 'Microsoft.CognitiveServices/accounts/dep
   }
 }
 
-resource aiCognitiveServicesDeployment2 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
-  name: 'text-embedding-ada-002'
-  parent: aiCognitiveServices
-  dependsOn: [
-    aiCognitiveServicesDeployment
-  ]
-  properties: {
-    model: {
-      format: 'OpenAI'
-      name: 'text-embedding-3-large'
-      version: '1'
-    }
-  }
-  sku: {
-    name: 'Standard'
-    capacity: 5
-  }
-}
-
 /*
   Create Azure Maps Account
 */
@@ -192,6 +173,27 @@ resource searchService 'Microsoft.Search/searchServices@2023-11-01' = {
     aiCognitiveServices
   ]
 }
+
+
+resource aiCognitiveServicesDeployment2 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
+  name: 'text-embedding-3-large'
+  parent: aiCognitiveServices
+  dependsOn: [
+    aiCognitiveServicesDeployment
+  ]
+  properties: {
+    model: {
+      format: 'OpenAI'
+      name: 'text-embedding-3-large'
+      version: '1'
+    }
+  }
+  sku: {
+    name: 'Standard'
+    capacity: 5
+  }
+}
+
 
 /*
   Return output values
