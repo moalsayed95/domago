@@ -127,9 +127,12 @@ resource aiCognitiveServicesDeployment 'Microsoft.CognitiveServices/accounts/dep
   }
 }
 
-resource textEmbedding3LargeDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
-  name: 'text-embedding-3-large'
+resource aiCognitiveServicesDeployment2 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = {
+  name: 'text-embedding-ada-002'
   parent: aiCognitiveServices
+  dependsOn: [
+    aiCognitiveServicesDeployment
+  ]
   properties: {
     model: {
       format: 'OpenAI'
@@ -139,7 +142,7 @@ resource textEmbedding3LargeDeployment 'Microsoft.CognitiveServices/accounts/dep
   }
   sku: {
     name: 'Standard'
-    capacity: 120
+    capacity: 5
   }
 }
 
