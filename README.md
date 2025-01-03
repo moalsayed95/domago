@@ -61,6 +61,7 @@ source .venv/bin/activate
 ```bash
 cd app/backend
 ```
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -70,23 +71,13 @@ pip install -r requirements.txt
 6. Run the backend server.
 
 ```bash
-cd app/backend
-```
-
-```bash
-python app.py
+cd app/backend && python app.py
 ```
 
 7. Run the frontend server.
 
 ```bash
-cd app/frontend
-```
-```bash
-npm install
-```
-```bash
-npm run dev
+cd app/frontend && npm run dev
 ```
 
 both the frontend and backend servers should be running for the app to work.
