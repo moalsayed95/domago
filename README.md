@@ -12,6 +12,9 @@ An interactive way to search flats in Vienna using Microsoft AI services.
     - Azure OpenAI Service
     - Azure Maps Account
 
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmoalsayed95%2Fdomago%2Fms%2Fiac%2Fazuredeploy.json)
+
+
 ## Setup
 1. Clone the repository.
 
