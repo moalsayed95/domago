@@ -152,7 +152,7 @@ class IndexManager:
                     VectorSearchProfile(
                         name="embedding_config",
                         algorithm_configuration_name="hnsw_config",
-                        vectorizer_name=(f"{self.index_name}-vectorizer" if self.use_int_vectorization else None),
+                        vectorizer=(f"{self.index_name}-vectorizer" if self.use_int_vectorization else None),
                     ),
                 ],
                 vectorizers=vectorizers,
