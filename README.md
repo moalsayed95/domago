@@ -39,7 +39,7 @@ configured setups directly from GitHub repositories. Access it via browser, VS C
     If you run into into permission issues, run: 
 
     ```bash
-    chmod u+r+x ./get-keys.sh --resource-group <resource-group-name>`
+    chmod u+r+x ./get-keys.sh --resource-group <resource-group-name>
     ```
 
 4. Create the AI search Index and index the dummy data from the `data` folder. The data folder has the flats data in JSON format `data/flat_cata.json`. You can do this by running the `index_manager.py` script in the backend project.
