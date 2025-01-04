@@ -65,8 +65,8 @@ azureMapsKey=$(az maps account keys list --name $azureMapsName --resource-group 
 cosmosdbAccountKey=$(az cosmosdb keys list --name $cosmosdbAccountName --resource-group $resourceGroupName --query primaryMasterKey -o tsv)
 cosmosdbEndpoint=$(az cosmosdb show --name $cosmosdbAccountName --resource-group $resourceGroupName --query "documentEndpoint" -o tsv)
 storageAccountKey=$(az storage account keys list --account-name $storageAccountName --resource-group $resourceGroupName --query "[0].value" -o tsv)
-storageAccountConnectionString=$(az storage account show-connection-string --name $storageAccountName --resource-group $resourceGroupName --query connectionString -o tsv)
 searchServiceKey=$(az search admin-key show --resource-group $resourceGroupName --service-name $searchServiceName --query primaryKey -o tsv)
+storageAccountConnectionString=$(az storage account show-connection-string --name $storageAccountName --resource-group $resourceGroupName --query connectionString -o tsv)
 
 # Overwrite the existing config.env file
 if [ -f ./.env ]; then
@@ -74,8 +74,7 @@ if [ -f ./.env ]; then
     rm ./.env
 fi
 
-env_file_path=$(realpath ../.env)
-echo "Writing the keys and properties to '$env_file_path'..."
+
 # Store the keys and properties in a file
 echo "Storing the keys and properties in '.env' file..."
 echo "AZURE_OPENAI_ENDPOINT=\"$aiCognitiveServicesEndpoint\"" >> ./.env
@@ -88,4 +87,5 @@ echo "AZURE_SEARCH_ENDPOINT=\"https://$searchServiceName.search.windows.net\"" >
 echo "AZURE_SEARCH_SERVICE_NAME=\"$searchServiceName\"" >> ./.env
 echo "AZURE_SEARCH_API_KEY=\"$searchServiceKey\"" >> ./.env
 echo "AZURE_MAPS_SUBSCRIPTION_KEY=\"$azureMapsKey\"" >> ./.env  # Added Azure Maps key
+echo "AZURE_STORAGE_CONNECTION_STRING=\"$storageAccountConnectionString\"" >> ./.env  # Added storage connection string
 echo "Keys and properties are stored in '.env' file successfully."
