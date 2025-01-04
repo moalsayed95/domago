@@ -17,13 +17,8 @@
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
-<<<<<<< HEAD
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "pip3 install --user -r requirements.txt && rm -rf node_modules package-lock.json && npm install && npm install vite", 
-=======
-	// Use 'postCreateCommand' to run commands after the container is created. 
-	"postCreateCommand": "pip3 install --user -r requirements.txt && rm -rf node_modules package-lock.json && npm install", 
->>>>>>> origin/ms
 
 	// Configure tool-specific properties.
 	"customizations": {
@@ -38,7 +33,9 @@
 				"Azurite.azurite",
 				"ms-azuretools.vscode-azurestorage",
 				"ms-azuretools.vscode-bicep",
-				"ms-vscode.azure-account"
+				"ms-vscode.azure-account",
+				"ms-azuretools.vscode-azurecli",  // Optional: Install VSCode Azure CLI extension
+    			"ms-azuretools.vscode-azure-storage"  
 			]
 		}
 	}

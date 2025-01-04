@@ -10,10 +10,16 @@ An interactive way to search flats in Vienna using Microsoft AI services.
 
 Clicking on button bellow will redirect you to the Azure portal to deploy the resources necessary to conduct this demo using the ARM template provided in this repository.
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmoalsayed95%2Fdomago%2Fms%2Fiac%2Fazuredeploy.json)
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmoalsayed95%2Fdomago%2Fms%2Finfra%2Fazuredeploy.json)
 
 This script will create the following resources: Azure AI Search, Azure Cosmos DB, Storage Account, Azure Maps Account, Azure OpenAI Service (with the deployments of `gpt-4o-realtime-preview` and `text-embedding-3-large`)
 
+## Setup
+1. Clone the repository.
+
+```bash	
+git clone https://github.com/moalsayed95/domago.git
+```
 
 ## Development Environment
 
@@ -24,14 +30,6 @@ GitHub Codespaces is a cloud-based development environment that allows you to co
 Please select your forked repository from the dropdown and choose `default_environment (Python 3.11)` as your default codespace configuration
 
 
-## Setup
-1. Clone the repository.
-
-```bash	
-git clone https://github.com/moalsayed95/domago.git
-```
-
-2. Create the Azure Services listed above.
 
 3. in the root directory of the backend project, use `.env.template` and rename it to `.env` and fill the env variables with the values from your Azure resources. In addition, in the root directory of the frontend project, use `.env.template` and rename it to `.env` and fill the env variables with the values from your Azure resources.
 
