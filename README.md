@@ -6,13 +6,24 @@ An interactive way to search flats in Vienna using Microsoft AI services.
 
 ![Screenshot of domago](ui/v1.png)
 
-## Prerequisites
-- Azure reosources:
-    - Azure AI Search
-    - Azure OpenAI Service
-    - Azure Maps Account
+## Pre-requisites
+
+Clicking on button bellow will redirect you to the Azure portal to deploy the resources necessary to conduct this demo using the ARM template provided in this repository.
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fmoalsayed95%2Fdomago%2Fms%2Fiac%2Fazuredeploy.json)
+
+This script will create the following resources: Azure AI Search, Azure Cosmos DB, Storage Account, Azure Maps Account, Azure OpenAI Service (with the deployments of `gpt-4o-realtime-preview` and `text-embedding-3-large`)
+
+
+## Development Environment
+
+GitHub Codespaces is a cloud-based development environment that allows you to code from anywhere. It provides a fully configured environment that can be launched directly from any GitHub repository, saving you from lengthy setup times. You can access Codespaces from your browser, Visual Studio Code, or the GitHub CLI, making it easy to work from virtually any device.
+
+To open GitHub Codespaces, click on the button below:
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/)
+
+Please select your forked repository from the dropdown and choose `default_environment (Python 3.11)` as your default codespace configuration
 
 
 ## Setup
