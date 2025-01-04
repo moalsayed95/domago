@@ -30,8 +30,12 @@ GitHub Codespaces is a cloud-based development environment that allows you to co
 Please select your forked repository from the dropdown and choose `default_environment (Python 3.11)` as your default codespace configuration
 
 
+3. After deploying the resources, you will need to configure the environment variables in the .env file. The .env file is a configuration file that contains the environment variables for the application. The .env file is automatically created running the following command within the terminal in your Codespace:
 
-3. in the root directory of the backend project, use `.env.template` and rename it to `.env` and fill the env variables with the values from your Azure resources. In addition, in the root directory of the frontend project, use `.env.template` and rename it to `.env` and fill the env variables with the values from your Azure resources.
+```bash
+./get-keys.sh --resource-group <resource-group-name>
+```
+
 
 4. Create the AI search Index and index the dummy data from the `data` folder. The data folder has the flats data in JSON format `data/flat_cata.json`. You can do this by running the `index_manager.py` script in the backend project.
 
@@ -59,21 +63,14 @@ Example Data:
   }
 ```	
 
-4. create a python environment and install the required packages for the backend.
 
-```bash
-python -m venv .venv && source .venv/bin/activate && cd app/backend && pip install -r requirements.txt
-```
-
-5. Deploy `gpt-4o-realtime-preview` in the Azure OpenAI Service.
-
-6. Run the backend server.
+5. Run the backend server.
 
 ```bash
 cd app/backend && python app.py
 ```
 
-7. Run the frontend server.
+6. Open another terminal and run the frontend server.
 
 ```bash
 cd app/frontend && npm run dev

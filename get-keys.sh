@@ -11,7 +11,7 @@ if [ -z "$(az account show)" ]; then
 fi
 
 # Get the resource group name from the script parameter named resource-group
-resourceGroupName="domago"
+resourceGroupName=""
 
 # Parse named parameters
 while [[ "$#" -gt 0 ]]; do
@@ -44,11 +44,14 @@ if [ $? -ne 0 ]; then
 	exit 1
 fi
 
+
 # Extract the resource names from the output parameters
 echo "Extracting the resource names from the output parameters..."
 aiCognitiveServicesName=$(jq -r '.aiCognitiveServicesName.value' tmp_outputs.json)
 searchServiceName=$(jq -r '.searchServiceName.value' tmp_outputs.json)
 azureMapsName=$(jq -r '.azureMapsName.value' tmp_outputs.json)  # Assuming azureMapsName is part of the outputs
+cosmosdbAccountName=$(jq -r '.cosmosdbAccountName.value' tmp_outputs.json)
+storageAccountName=$(jq -r '.storageAccountName.value' tmp_outputs.json)
 
 # Delete the temporary file
 rm tmp_outputs.json
@@ -58,26 +61,31 @@ echo "Getting the keys and endpoints from the resources..."
 aiCognitiveServicesEndpoint=$(az cognitiveservices account show --name $aiCognitiveServicesName --resource-group $resourceGroupName --query properties.endpoint -o tsv)
 aiCognitiveServicesKey=$(az cognitiveservices account keys list --name $aiCognitiveServicesName --resource-group $resourceGroupName --query key1 -o tsv)
 searchServiceEndpoint=$(az search service show --resource-group $resourceGroupName --name $searchServiceName --query endpoint -o tsv)
+azureMapsKey=$(az maps account keys list --name $azureMapsName --resource-group $resourceGroupName --query "primaryKey" -o tsv)  # Retrieving Azure Maps primary keysearchServiceKey=$(az search admin-key show --resource-group $resourceGroupName --service-name $searchServiceName --query primaryKey -o tsv)
+cosmosdbAccountKey=$(az cosmosdb keys list --name $cosmosdbAccountName --resource-group $resourceGroupName --query primaryMasterKey -o tsv)
+cosmosdbEndpoint=$(az cosmosdb show --name $cosmosdbAccountName --resource-group $resourceGroupName --query "documentEndpoint" -o tsv)
+storageAccountKey=$(az storage account keys list --account-name $storageAccountName --resource-group $resourceGroupName --query "[0].value" -o tsv)
+storageAccountConnectionString=$(az storage account show-connection-string --name $storageAccountName --resource-group $resourceGroupName --query connectionString -o tsv)
 searchServiceKey=$(az search admin-key show --resource-group $resourceGroupName --service-name $searchServiceName --query primaryKey -o tsv)
-azureMapsKey=$(az cognitiveservices account keys list --name $azureMapsName --resource-group $resourceGroupName --query key1 -o tsv)  # Retrieving Azure Maps key
 
 # Overwrite the existing config.env file
-if [ -f ../.env ]; then
-	rm ../.env
+if [ -f ./.env ]; then
+    echo "File ../.env exists and will be deleted."
+    rm ./.env
 fi
 
+env_file_path=$(realpath ../.env)
+echo "Writing the keys and properties to '$env_file_path'..."
 # Store the keys and properties in a file
 echo "Storing the keys and properties in '.env' file..."
-echo "AZURE_OPENAI_ENDPOINT=\"$aiCognitiveServicesEndpoint\"" >> ../.env
-echo "AZURE_OPENAI_REALTIME_DEPLOYMENT=\"gpt-4o-realtime-preview\"" >> ../.env
-echo "AZURE_OPENAI_REALTIME_VOICE_CHOICE=\"alloy\"" >> ../.env
-echo "AZURE_OPENAI_API_VERSION=\"2024-05-01-preview\"" >> ../.env
-echo "AZURE_OPENAI_API_KEY=\"$aiCognitiveServicesKey\"" >> ../.env
-echo "AZURE_SEARCH_INDEX=\"flat-index\"" >> ../.env
-echo "AZURE_TENANT_ID=\"<your-tenant-id-here>\"" >> ../.env
-echo "AZURE_SEARCH_ENDPOINT=\"$searchServiceEndpoint\"" >> ../.env
-echo "AZURE_SEARCH_SERVICE_NAME=\"$searchServiceName\"" >> ../.env
-echo "AZURE_SEARCH_API_KEY=\"$searchServiceKey\"" >> ../.env
-echo "VITE_AZURE_MAPS_SUBSCRIPTION_KEY=\"$azureMapsKey\"" >> ../.env  # Added Azure Maps key
-
+echo "AZURE_OPENAI_ENDPOINT=\"$aiCognitiveServicesEndpoint\"" >> ./.env
+echo "AZURE_OPENAI_REALTIME_DEPLOYMENT=\"gpt-4o-realtime-preview\"" >> ./.env
+echo "AZURE_OPENAI_REALTIME_VOICE_CHOICE=\"alloy\"" >> ./.env
+echo "AZURE_OPENAI_API_VERSION=\"2024-05-01-preview\"" >> ./.env
+echo "AZURE_OPENAI_API_KEY=\"$aiCognitiveServicesKey\"" >> ./.env
+echo "AZURE_SEARCH_INDEX=\"flat-index\"" >> ./.env
+echo "AZURE_SEARCH_ENDPOINT=\"https://$searchServiceName.search.windows.net\"" >> ./.env
+echo "AZURE_SEARCH_SERVICE_NAME=\"$searchServiceName\"" >> ./.env
+echo "AZURE_SEARCH_API_KEY=\"$searchServiceKey\"" >> ./.env
+echo "AZURE_MAPS_SUBSCRIPTION_KEY=\"$azureMapsKey\"" >> ./.env  # Added Azure Maps key
 echo "Keys and properties are stored in '.env' file successfully."

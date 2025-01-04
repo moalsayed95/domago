@@ -1,228 +1,228 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "location": {
-        "type": "string",
-        "defaultValue": "swedencentral",
-        "allowedValues": [
-            "swedencentral"
-        ],
-        "metadata": {
-            "description": "Azure location where resources should be deployed (e.g., swedencentral)"
-        }
-        },
-        "locationAzureMaps": {
-        "type": "string",
-        "defaultValue": "westeurope",
-        "allowedValues": [
-            "westeurope"
-        ],
-        "metadata": {
-            "description": "Azure location where Azure Maps should be deployed (e.g., westeurope)"
-        }
-        }
-    },
-    "variables": {
-        "prefix": "domago",
-        "suffix": "[uniqueString(resourceGroup().id)]",
-        "databaseAccountName": "[format('{0}-cosmosdb-{1}', variables('prefix'), variables('suffix'))]",
-        "databaseName": "DomagoDB",
-        "databaseContainerNames": [
-        "data",
-        "pics"
-        ],
-        "locations": [
-        {
-            "locationName": "[parameters('location')]",
-            "failoverPriority": 0,
-            "isZoneRedundant": false
-        }
-        ],
-        "storageAccountName": "[replace(format('{0}-sa-{1}', variables('prefix'), variables('suffix')), '-', '')]",
-        "aiCognitiveServicesName": "[format('{0}-aiservices-{1}', variables('prefix'), variables('suffix'))]",
-        "azureMapsName": "[format('{0}-maps-{1}', variables('prefix'), variables('suffix'))]",
-        "searchServiceName": "[format('{0}-search-{1}', variables('prefix'), variables('suffix'))]"
-    },
-    "resources": [
-        {
-        "type": "Microsoft.DocumentDB/databaseAccounts",
-        "apiVersion": "2021-01-15",
-        "name": "[variables('databaseAccountName')]",
-        "kind": "GlobalDocumentDB",
-        "location": "[parameters('location')]",
-        "properties": {
-            "consistencyPolicy": {
-            "defaultConsistencyLevel": "Session"
-            },
-            "locations": "[variables('locations')]",
-            "databaseAccountOfferType": "Standard",
-            "enableAutomaticFailover": false,
-            "enableMultipleWriteLocations": false
-        }
-        },
-        {
-        "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
-        "apiVersion": "2021-01-15",
-        "name": "[format('{0}/{1}', variables('databaseAccountName'), variables('databaseName'))]",
-        "properties": {
-            "resource": {
-            "id": "[variables('databaseName')]"
-            }
-        },
-        "dependsOn": [
-            "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseAccountName'))]"
-        ]
-        },
-        {
-        "copy": {
-            "name": "databaseContainer",
-            "count": "[length(variables('databaseContainerNames'))]"
-        },
-        "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
-        "apiVersion": "2024-05-15",
-        "name": "[format('{0}/{1}/{2}', variables('databaseAccountName'), variables('databaseName'), variables('databaseContainerNames')[copyIndex()])]",
-        "properties": {
-            "resource": {
-            "id": "[variables('databaseContainerNames')[copyIndex()]]",
-            "partitionKey": {
-                "paths": [
-                "/id"
-                ],
-                "kind": "Hash"
-            }
-            },
-            "options": {
-            "autoscaleSettings": {
-                "maxThroughput": 1000
-            }
-            }
-        },
-        "dependsOn": [
-            "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', variables('databaseAccountName'), variables('databaseName'))]"
-        ]
-        },
-        {
-        "type": "Microsoft.Storage/storageAccounts",
-        "apiVersion": "2023-05-01",
-        "name": "[variables('storageAccountName')]",
-        "location": "[parameters('location')]",
-        "sku": {
-            "name": "Standard_LRS"
-        },
-        "kind": "StorageV2"
-        },
-        {
-        "type": "Microsoft.CognitiveServices/accounts",
-        "apiVersion": "2023-05-01",
-        "name": "[variables('aiCognitiveServicesName')]",
-        "location": "[parameters('location')]",
-        "sku": {
-            "name": "S0"
-        },
-        "kind": "OpenAI",
-        "properties": {
-            "apiProperties": {
-            "statisticsEnabled": false
-            }
-        }
-        },
-        {
-        "type": "Microsoft.CognitiveServices/accounts/deployments",
-        "apiVersion": "2023-05-01",
-        "name": "[format('{0}/{1}', variables('aiCognitiveServicesName'), 'gpt-4o-realtime-preview')]",
-        "properties": {
-            "model": {
-            "format": "OpenAI",
-            "name": "gpt-4o-realtime-preview",
-            "version": "2024-10-01"
-            }
-        },
-        "sku": {
-            "name": "GlobalStandard",
-            "capacity": 1
-        },
-        "dependsOn": [
-            "[resourceId('Microsoft.CognitiveServices/accounts', variables('aiCognitiveServicesName'))]"
-        ]
-        },
-        {
-        "type": "Microsoft.CognitiveServices/accounts/deployments",
-        "apiVersion": "2023-05-01",
-        "name": "[format('{0}/{1}', variables('aiCognitiveServicesName'), 'text-embedding-3-large')]",
-        "properties": {
-            "model": {
-            "format": "OpenAI",
-            "name": "text-embedding-3-large",
-            "version": "1"
-            }
-        },
-        "sku": {
-            "name": "Standard",
-            "capacity": 10
-        },
-        "dependsOn": [
-            "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('aiCognitiveServicesName'), 'gpt-4o-realtime-preview')]"
-        ]
-        },
-        {
-        "type": "Microsoft.Maps/accounts",
-        "apiVersion": "2024-01-01-preview",
-        "name": "[variables('azureMapsName')]",
-        "location": "[parameters('locationAzureMaps')]",
-        "sku": {
-            "name": "G2"
-        },
-        "kind": "Gen2",
-        "properties": {
-            "disableLocalAuth": false,
-            "cors": {
-            "corsRules": [
-                {
-                "allowedOrigins": []
-                }
-            ]
-            },
-            "publicNetworkAccess": "enabled",
-            "locations": []
-        }
-        },
-        {
-        "type": "Microsoft.Search/searchServices",
-        "apiVersion": "2023-11-01",
-        "name": "[variables('searchServiceName')]",
-        "location": "[parameters('location')]",
-        "sku": {
-            "name": "basic"
-        },
-        "properties": {
-            "hostingMode": "default"
-        },
-        "dependsOn": [
-            "[resourceId('Microsoft.CognitiveServices/accounts', variables('aiCognitiveServicesName'))]"
-        ]
-        }
-    ],
-    "outputs": {
-        "storageAccountName": {
-        "type": "string",
-        "value": "[variables('storageAccountName')]"
-        },
-        "cosmosdbAccountName": {
-        "type": "string",
-        "value": "[variables('databaseAccountName')]"
-        },
-        "azureMapsName": {
-        "type": "string",
-        "value": "[variables('azureMapsName')]"
-        },
-        "aiCognitiveServicesName": {
-        "type": "string",
-        "value": "[variables('aiCognitiveServicesName')]"
-        },
-        "searchServiceName": {
-        "type": "string",
-        "value": "[variables('searchServiceName')]"
-        }
-    }
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+      "location": {
+      "type": "string",
+      "defaultValue": "swedencentral",
+      "allowedValues": [
+          "swedencentral"
+      ],
+      "metadata": {
+          "description": "Azure location where resources should be deployed (e.g., swedencentral)"
+      }
+      },
+      "locationAzureMaps": {
+      "type": "string",
+      "defaultValue": "westeurope",
+      "allowedValues": [
+          "westeurope"
+      ],
+      "metadata": {
+          "description": "Azure location where Azure Maps should be deployed (e.g., westeurope)"
+      }
+      }
+  },
+  "variables": {
+      "prefix": "domago",
+      "suffix": "[uniqueString(resourceGroup().id)]",
+      "databaseAccountName": "[format('{0}-cosmosdb-{1}', variables('prefix'), variables('suffix'))]",
+      "databaseName": "DomagoDB",
+      "databaseContainerNames": [
+      "data",
+      "pics"
+      ],
+      "locations": [
+      {
+          "locationName": "[parameters('location')]",
+          "failoverPriority": 0,
+          "isZoneRedundant": false
+      }
+      ],
+      "storageAccountName": "[replace(format('{0}-sa-{1}', variables('prefix'), variables('suffix')), '-', '')]",
+      "aiCognitiveServicesName": "[format('{0}-aiservices-{1}', variables('prefix'), variables('suffix'))]",
+      "azureMapsName": "[format('{0}-maps-{1}', variables('prefix'), variables('suffix'))]",
+      "searchServiceName": "[format('{0}-search-{1}', variables('prefix'), variables('suffix'))]"
+  },
+  "resources": [
+      {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2021-01-15",
+      "name": "[variables('databaseAccountName')]",
+      "kind": "GlobalDocumentDB",
+      "location": "[parameters('location')]",
+      "properties": {
+          "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session"
+          },
+          "locations": "[variables('locations')]",
+          "databaseAccountOfferType": "Standard",
+          "enableAutomaticFailover": false,
+          "enableMultipleWriteLocations": false
+      }
+      },
+      {
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases",
+      "apiVersion": "2021-01-15",
+      "name": "[format('{0}/{1}', variables('databaseAccountName'), variables('databaseName'))]",
+      "properties": {
+          "resource": {
+          "id": "[variables('databaseName')]"
+          }
+      },
+      "dependsOn": [
+          "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseAccountName'))]"
+      ]
+      },
+      {
+      "copy": {
+          "name": "databaseContainer",
+          "count": "[length(variables('databaseContainerNames'))]"
+      },
+      "type": "Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers",
+      "apiVersion": "2024-05-15",
+      "name": "[format('{0}/{1}/{2}', variables('databaseAccountName'), variables('databaseName'), variables('databaseContainerNames')[copyIndex()])]",
+      "properties": {
+          "resource": {
+          "id": "[variables('databaseContainerNames')[copyIndex()]]",
+          "partitionKey": {
+              "paths": [
+              "/id"
+              ],
+              "kind": "Hash"
+          }
+          },
+          "options": {
+          "autoscaleSettings": {
+              "maxThroughput": 1000
+          }
+          }
+      },
+      "dependsOn": [
+          "[resourceId('Microsoft.DocumentDB/databaseAccounts/sqlDatabases', variables('databaseAccountName'), variables('databaseName'))]"
+      ]
+      },
+      {
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-05-01",
+      "name": "[variables('storageAccountName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+          "name": "Standard_LRS"
+      },
+      "kind": "StorageV2"
+      },
+      {
+      "type": "Microsoft.CognitiveServices/accounts",
+      "apiVersion": "2023-05-01",
+      "name": "[variables('aiCognitiveServicesName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+          "name": "S0"
+      },
+      "kind": "OpenAI",
+      "properties": {
+          "apiProperties": {
+          "statisticsEnabled": false
+          }
+      }
+      },
+      {
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}', variables('aiCognitiveServicesName'), 'gpt-4o-realtime-preview')]",
+      "properties": {
+          "model": {
+          "format": "OpenAI",
+          "name": "gpt-4o-realtime-preview",
+          "version": "2024-10-01"
+          }
+      },
+      "sku": {
+          "name": "GlobalStandard",
+          "capacity": 1
+      },
+      "dependsOn": [
+          "[resourceId('Microsoft.CognitiveServices/accounts', variables('aiCognitiveServicesName'))]"
+      ]
+      },
+      {
+      "type": "Microsoft.CognitiveServices/accounts/deployments",
+      "apiVersion": "2023-05-01",
+      "name": "[format('{0}/{1}', variables('aiCognitiveServicesName'), 'text-embedding-3-large')]",
+      "properties": {
+          "model": {
+          "format": "OpenAI",
+          "name": "text-embedding-3-large",
+          "version": "1"
+          }
+      },
+      "sku": {
+          "name": "Standard",
+          "capacity": 10
+      },
+      "dependsOn": [
+          "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('aiCognitiveServicesName'), 'gpt-4o-realtime-preview')]"
+      ]
+      },
+      {
+      "type": "Microsoft.Maps/accounts",
+      "apiVersion": "2024-01-01-preview",
+      "name": "[variables('azureMapsName')]",
+      "location": "[parameters('locationAzureMaps')]",
+      "sku": {
+          "name": "G2"
+      },
+      "kind": "Gen2",
+      "properties": {
+          "disableLocalAuth": false,
+          "cors": {
+          "corsRules": [
+              {
+              "allowedOrigins": []
+              }
+          ]
+          },
+          "publicNetworkAccess": "enabled",
+          "locations": []
+      }
+      },
+      {
+      "type": "Microsoft.Search/searchServices",
+      "apiVersion": "2023-11-01",
+      "name": "[variables('searchServiceName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+          "name": "basic"
+      },
+      "properties": {
+          "hostingMode": "default"
+      },
+      "dependsOn": [
+          "[resourceId('Microsoft.CognitiveServices/accounts', variables('aiCognitiveServicesName'))]"
+      ]
+      }
+  ],
+  "outputs": {
+      "storageAccountName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]"
+      },
+      "cosmosdbAccountName": {
+      "type": "string",
+      "value": "[variables('databaseAccountName')]"
+      },
+      "azureMapsName": {
+      "type": "string",
+      "value": "[variables('azureMapsName')]"
+      },
+      "aiCognitiveServicesName": {
+      "type": "string",
+      "value": "[variables('aiCognitiveServicesName')]"
+      },
+      "searchServiceName": {
+      "type": "string",
+      "value": "[variables('searchServiceName')]"
+      }
+  }
 }

@@ -18,7 +18,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip3 install --user -r requirements.txt && rm -rf node_modules package-lock.json && npm install && npm install vite", 
+	"postCreateCommand": "pip3 install --user -r requirements.txt && rm -rf node_modules package-lock.json && npm install && npm install vite --save-dev", 
 
 	// Configure tool-specific properties.
 	"customizations": {
