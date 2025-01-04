@@ -159,7 +159,7 @@
         },
         "sku": {
             "name": "Standard",
-            "capacity": 120
+            "capacity": 10
         },
         "dependsOn": [
             "[resourceId('Microsoft.CognitiveServices/accounts/deployments', variables('aiCognitiveServicesName'), 'gpt-4o-realtime-preview')]"
