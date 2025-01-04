@@ -19,8 +19,6 @@ This script will create the following resources: Azure AI Search, Azure Cosmos D
 
 GitHub Codespaces is a cloud-based development environment that allows you to code from anywhere. It provides a fully configured environment that can be launched directly from any GitHub repository, saving you from lengthy setup times. You can access Codespaces from your browser, Visual Studio Code, or the GitHub CLI, making it easy to work from virtually any device.
 
-To open GitHub Codespaces, click on the button below:
-
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/)
 
 Please select your forked repository from the dropdown and choose `default_environment (Python 3.11)` as your default codespace configuration
