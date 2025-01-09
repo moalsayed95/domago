@@ -17,7 +17,6 @@ class SearchManager:
         api_key: str,
         index_name: str,
         embedding_model: str,
-        endpoint_env_var="AZURE_SEARCH_SERVICE"
     ):
         self.index_name = index_name
         self.embedding_model = embedding_model
