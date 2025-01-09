@@ -10,7 +10,7 @@ interface ListingCardProps {
 
 export default function ListingCard({ listing, highlight = false, isFavorite = false }: ListingCardProps) {
     return (
-        <Card className={`mx-4 my-1 w-full max-w-lg overflow-hidden rounded-lg border shadow-md ${highlight ? "best-listing-card" : ""}`}>
+        <Card className={`mx-4 my-1 w-full max-w-lg overflow-hidden border shadow-md ${highlight ? "best-listing-card" : ""}`}>
             <CardHeader className="flex items-start justify-between p-4">
                 <div className="flex items-center">
                     <CardTitle className="text-lg font-bold">{listing.title}</CardTitle>

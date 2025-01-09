@@ -12,6 +12,7 @@ import ListingCard from "./components/ui/ListingCard";
 import MapView from "./components/ui/MapView";
 import StatusMessage from "@/components/ui/status-message";
 import { Mic, MicOff } from "lucide-react";
+import UserPreferences from "./components/ui/UserPreferences";
 
 function App() {
     const { t } = useTranslation();
@@ -147,28 +148,35 @@ function App() {
                 </div>
             </header>
 
-            {/* Main Content */}
-            <main className="flex flex-grow flex-row justify-center">
-                <div className="container mx-auto flex flex-row">
-                    {/* Listings Section */}
-                    <div className="w-1/2 overflow-y-auto p-4">
-                        {displayedListings.length > 0 ? (
-                            <div className="flex flex-wrap justify-center gap-4">
-                                {displayedListings.map(l => (
-                                    <ListingCard key={l.id} listing={l} highlight={highlightedListingId === l.id} isFavorite={favorites.includes(l.id)} />
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-center text-lg">{page === "favorites" ? t("No favorites yet.") : t("No listings found.")}</p>
-                        )}
+            {/* Main Content - Updated Layout */}
+            <main className="flex flex-grow flex-col">
+                <div className="container mx-auto flex flex-row gap-4 p-4">
+                    {/* User Preferences Section */}
+                    <div className="w-1/4">
+                        <UserPreferences />
                     </div>
 
-                    {/* Map Section */}
-                    <div className="w-1/2 p-4">
-                        <div className="flex w-full items-stretch overflow-hidden rounded-lg">
+                    {/* Map Section - Now wider */}
+                    <div className="w-3/4">
+                        <div className="h-[500px] w-full overflow-hidden rounded-lg">
                             <MapView listings={displayedListings} center={mapCenter} highlightedListingId={highlightedListingId} zoomDelta={zoomDelta} />
                         </div>
                     </div>
+                </div>
+
+                {/* Listings Section - Now below the map */}
+                <div className="container mx-auto p-4">
+                    {displayedListings.length > 0 ? (
+                        <div className="flex gap-4 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                            {displayedListings.map(l => (
+                                <div key={l.id} className="w-[400px] flex-none">
+                                    <ListingCard listing={l} highlight={highlightedListingId === l.id} isFavorite={favorites.includes(l.id)} />
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-center text-lg">{page === "favorites" ? t("No favorites yet.") : t("No listings found.")}</p>
+                    )}
                 </div>
             </main>
         </div>
