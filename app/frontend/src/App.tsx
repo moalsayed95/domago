@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import isEqual from "lodash.isequal";
 
@@ -11,7 +11,7 @@ import logo from "./assets/logo.svg";
 import ListingCard from "./components/ui/ListingCard";
 import MapView from "./components/ui/MapView";
 import StatusMessage from "@/components/ui/status-message";
-import { Mic, MicOff } from "lucide-react";
+import { Mic, MicOff, Home, Heart, MessageCircle } from "lucide-react";
 import UserPreferences from "./components/ui/UserPreferences";
 
 function App() {
@@ -23,7 +23,9 @@ function App() {
 
     // Favorites + Page
     const [favorites, setFavorites] = useState<string[]>([]);
-    const [page, setPage] = useState<"main" | "favorites">("main");
+    const [page, setPage] = useState<"main" | "favorites" | "messages">("main");
+
+    const listingsContainerRef = useRef<HTMLDivElement>(null);
 
     const { startSession, addUserAudio, inputAudioBufferClear } = useRealTime({
         onWebSocketOpen: () => console.log("WebSocket connection opened"),
@@ -101,6 +103,21 @@ function App() {
     // Which listings to display
     const displayedListings = page === "favorites" ? listings.filter(l => favorites.includes(l.id)) : listings;
 
+    useEffect(() => {
+        if (highlightedListingId && listingsContainerRef.current) {
+            const container = listingsContainerRef.current;
+            const highlightedCard = container.querySelector(`[data-listing-id="${highlightedListingId}"]`);
+
+            if (highlightedCard) {
+                highlightedCard.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "center"
+                });
+            }
+        }
+    }, [highlightedListingId]);
+
     return (
         <div className="flex min-h-screen flex-col bg-background text-foreground transition-colors dark:bg-foreground dark:text-background">
             {/* Fixed Header */}
@@ -127,57 +144,107 @@ function App() {
                 </div>
                 {/* Tabs for switching between Available Listings and Favorites */}
                 <div className="border-t bg-gray-50 dark:bg-gray-800">
-                    <div className="container mx-auto flex gap-4 px-4 py-2">
-                        <button
-                            onClick={() => setPage("main")}
-                            className={`px-4 py-2 font-semibold transition-colors ${
-                                page === "main" ? "bg-white text-purple-600 dark:bg-gray-900" : "text-gray-600 hover:text-purple-600 dark:text-gray-300"
-                            } rounded shadow-sm`}
-                        >
-                            {t("Available Listings")}
-                        </button>
-                        <button
-                            onClick={() => setPage("favorites")}
-                            className={`px-4 py-2 font-semibold transition-colors ${
-                                page === "favorites" ? "bg-white text-pink-600 dark:bg-gray-900" : "text-gray-600 hover:text-pink-600 dark:text-gray-300"
-                            } rounded shadow-sm`}
-                        >
-                            {t("Your Favorites")}
-                        </button>
+                    <div className="container mx-auto px-4">
+                        <div className="flex space-x-8">
+                            <button
+                                onClick={() => setPage("main")}
+                                className={`group inline-flex items-center border-b py-4 text-sm font-medium transition-colors ${
+                                    page === "main"
+                                        ? "border-purple-600 text-purple-600 dark:border-purple-500 dark:text-purple-500"
+                                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                                }`}
+                            >
+                                <Home
+                                    className={`mr-2 h-5 w-5 ${
+                                        page === "main"
+                                            ? "text-purple-600 dark:text-purple-500"
+                                            : "text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300"
+                                    }`}
+                                />
+                                {t("Available Listings")}
+                            </button>
+
+                            <button
+                                onClick={() => setPage("favorites")}
+                                className={`group inline-flex items-center border-b py-4 text-sm font-medium transition-colors ${
+                                    page === "favorites"
+                                        ? "border-pink-600 text-pink-600 dark:border-pink-500 dark:text-pink-500"
+                                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                                }`}
+                            >
+                                <Heart
+                                    className={`mr-2 h-5 w-5 ${
+                                        page === "favorites"
+                                            ? "text-pink-600 dark:text-pink-500"
+                                            : "text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300"
+                                    }`}
+                                />
+                                {t("Your Favorites")}
+                            </button>
+
+                            <button
+                                onClick={() => setPage("messages")}
+                                className={`group inline-flex items-center border-b py-4 text-sm font-medium transition-colors ${
+                                    page === "messages"
+                                        ? "border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-500"
+                                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                                }`}
+                            >
+                                <MessageCircle
+                                    className={`mr-2 h-5 w-5 ${
+                                        page === "messages"
+                                            ? "text-blue-600 dark:text-blue-500"
+                                            : "text-gray-400 group-hover:text-gray-500 dark:group-hover:text-gray-300"
+                                    }`}
+                                />
+                                {t("Messages")}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </header>
 
             {/* Main Content - Updated Layout */}
             <main className="flex flex-grow flex-col">
-                <div className="container mx-auto flex flex-row gap-4 p-4">
-                    {/* User Preferences Section */}
-                    <div className="w-1/4">
-                        <UserPreferences />
+                {page === "messages" ? (
+                    <div className="container mx-auto p-4">
+                        <p className="text-center text-lg">Messages page coming soon...</p>
                     </div>
+                ) : (
+                    <div className="container mx-auto flex flex-row gap-4 p-4">
+                        {/* User Preferences Section */}
+                        <div className="w-1/4">
+                            <UserPreferences />
+                        </div>
 
-                    {/* Map Section - Now wider */}
-                    <div className="w-3/4">
-                        <div className="h-[500px] w-full overflow-hidden rounded-lg">
-                            <MapView listings={displayedListings} center={mapCenter} highlightedListingId={highlightedListingId} zoomDelta={zoomDelta} />
+                        {/* Map Section - Now wider */}
+                        <div className="w-3/4">
+                            <div className="h-[500px] w-full overflow-hidden rounded-lg">
+                                <MapView listings={displayedListings} center={mapCenter} highlightedListingId={highlightedListingId} zoomDelta={zoomDelta} />
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
 
                 {/* Listings Section - Now below the map */}
-                <div className="container mx-auto p-4">
-                    {displayedListings.length > 0 ? (
-                        <div className="flex gap-4 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                            {displayedListings.map(l => (
-                                <div key={l.id} className="w-[400px] flex-none">
-                                    <ListingCard listing={l} highlight={highlightedListingId === l.id} isFavorite={favorites.includes(l.id)} />
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <p className="text-center text-lg">{page === "favorites" ? t("No favorites yet.") : t("No listings found.")}</p>
-                    )}
-                </div>
+                {page !== "messages" && (
+                    <div className="container mx-auto p-4">
+                        {displayedListings.length > 0 ? (
+                            <div
+                                ref={listingsContainerRef}
+                                className="flex gap-4 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                            >
+                                {displayedListings.map(l => (
+                                    <div key={l.id} className="w-[400px] flex-none" data-listing-id={l.id}>
+                                        <ListingCard listing={l} highlight={highlightedListingId === l.id} isFavorite={favorites.includes(l.id)} />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-center text-lg">{page === "favorites" ? t("No favorites yet.") : t("No listings found.")}</p>
+                        )}
+                    </div>
+                )}
             </main>
         </div>
     );
