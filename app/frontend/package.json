@@ -14,22 +14,28 @@
     "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-slider": "^1.2.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "all": "^0.0.0",
     "azure-maps-control": "^3.5.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "dependencies": "^0.0.1",
     "framer-motion": "^11.5.6",
     "i18next": "^23.12.2",
     "i18next-browser-languagedetector": "^8.0.0",
     "i18next-http-backend": "^2.5.2",
+    "in": "^0.19.0",
+    "install": "^0.13.0",
     "lodash.isequal": "^4.5.0",
     "lucide-react": "^0.445.0",
+    "project": "^0.1.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-i18next": "^15.0.0",
     "react-icons": "^5.4.0",
     "react-use-websocket": "^4.8.1",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "the": "^1.0.2",
+    "your": "^0.2.3"
   },
   "devDependencies": {
     "@types/lodash.isequal": "^4.5.8",
@@ -42,7 +48,9 @@
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.8",
     "tailwindcss": "^3.4.12",
+    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-animated": "^1.1.2",
     "typescript": "^5.5.3",
-    "vite": "^5.4.8"
+    "vite": "^5.4.11"
   }
 }

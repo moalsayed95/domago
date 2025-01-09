@@ -1,0 +1,45 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+	"name": "default_environment (Python 3.11)",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/azure-cli:1": {
+			"installBicep": true
+		},
+		
+		"ghcr.io/devcontainers-contrib/features/jshint:2" : {}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "pip3 install --user -r requirements.txt && rm -rf node_modules package-lock.json && npm install && npm install vite --save-dev", 
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"github.copilot",
+				"github.copilot-chat",
+				"ms-azuretools.vscode-azurefunctions",
+				"ms-python.python",
+				"ms-python.autopep8",
+				"benjaminbenais.copilot-theme",
+				"Azurite.azurite",
+				"ms-azuretools.vscode-azurestorage",
+				"ms-azuretools.vscode-bicep",
+				"ms-vscode.azure-account",
+				"ms-azuretools.vscode-azurecli",  // Optional: Install VSCode Azure CLI extension
+    			"ms-azuretools.vscode-azure-storage"  
+			]
+		}
+	}
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
