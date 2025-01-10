@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Message {
     id: string;
@@ -14,11 +14,25 @@ interface ChatInterfaceProps {
         email: string;
     };
     onBack: () => void;
+    initialMessage?: string;
 }
 
-export default function ChatInterface({ contact, onBack }: ChatInterfaceProps) {
+export default function ChatInterface({ contact, onBack, initialMessage }: ChatInterfaceProps) {
     const [messages, setMessages] = useState<Message[]>([]);
     const [newMessage, setNewMessage] = useState("");
+
+    useEffect(() => {
+        if (initialMessage && messages.length === 0) {
+            const message: Message = {
+                id: Date.now().toString(),
+                from: "user",
+                to: contact.email,
+                content: initialMessage,
+                timestamp: new Date()
+            };
+            setMessages([message]);
+        }
+    }, [initialMessage, contact.email]);
 
     const handleSendMessage = (e: React.FormEvent) => {
         e.preventDefault();

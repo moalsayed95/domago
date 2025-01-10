@@ -1,18 +1,6 @@
 import { useTranslation } from "react-i18next";
-
-interface Preferences {
-    budget?: {
-        min: number;
-        max: number;
-    };
-    size?: {
-        min: number;
-        max: number;
-    };
-    rooms?: number;
-    location?: string;
-    features?: string[];
-}
+import * as Icons from "lucide-react";
+import { Preferences } from "@/types";
 
 interface UserPreferencesProps {
     preferences?: Preferences;
@@ -30,13 +18,22 @@ export default function UserPreferences({ preferences }: UserPreferencesProps) {
         );
     }
 
+    // Dynamic icon component rendering
+    const IconComponent = (iconName: string) => {
+        const Icon = Icons[iconName as keyof typeof Icons] as React.ElementType;
+        return Icon ? <Icon className="h-4 w-4" /> : null;
+    };
+
     return (
         <div className="rounded-lg border p-4">
             <h2 className="mb-4 text-lg font-semibold">{t("Your Preferences")}</h2>
 
             {preferences.budget && (
                 <div className="mb-3">
-                    <h3 className="text-sm font-medium text-gray-700">{t("Budget")}</h3>
+                    <h3 className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                        <Icons.Wallet className="h-4 w-4" />
+                        {t("Budget")}
+                    </h3>
                     <p className="text-sm text-gray-600">
                         €{preferences.budget.min.toLocaleString()} - €{preferences.budget.max.toLocaleString()}
                     </p>
@@ -45,7 +42,10 @@ export default function UserPreferences({ preferences }: UserPreferencesProps) {
 
             {preferences.size && (
                 <div className="mb-3">
-                    <h3 className="text-sm font-medium text-gray-700">{t("Size")}</h3>
+                    <h3 className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                        <Icons.Square className="h-4 w-4" />
+                        {t("Size")}
+                    </h3>
                     <p className="text-sm text-gray-600">
                         {preferences.size.min}m² - {preferences.size.max}m²
                     </p>
@@ -54,27 +54,36 @@ export default function UserPreferences({ preferences }: UserPreferencesProps) {
 
             {preferences.rooms && (
                 <div className="mb-3">
-                    <h3 className="text-sm font-medium text-gray-700">{t("Rooms")}</h3>
+                    <h3 className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                        <Icons.LayoutGrid className="h-4 w-4" />
+                        {t("Rooms")}
+                    </h3>
                     <p className="text-sm text-gray-600">{preferences.rooms}</p>
                 </div>
             )}
 
             {preferences.location && (
                 <div className="mb-3">
-                    <h3 className="text-sm font-medium text-gray-700">{t("Location")}</h3>
+                    <h3 className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                        <Icons.MapPin className="h-4 w-4" />
+                        {t("Location")}
+                    </h3>
                     <p className="text-sm text-gray-600">{preferences.location}</p>
                 </div>
             )}
 
-            {preferences.features && preferences.features.length > 0 && (
+            {preferences.features.length > 0 && (
                 <div className="mb-3">
                     <h3 className="text-sm font-medium text-gray-700">{t("Features")}</h3>
-                    <div className="mt-1 flex flex-wrap gap-1">
-                        {preferences.features.map(feature => (
-                            <span key={feature} className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
-                                {feature}
-                            </span>
-                        ))}
+                    <div className="mt-2 flex flex-wrap gap-2">
+                        {preferences.features
+                            .filter(feature => feature.enabled)
+                            .map(feature => (
+                                <span key={feature.id} className="flex items-center gap-1 rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
+                                    {IconComponent(feature.icon)}
+                                    {feature.label}
+                                </span>
+                            ))}
                     </div>
                 </div>
             )}

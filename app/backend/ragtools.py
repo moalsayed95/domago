@@ -112,9 +112,13 @@ _send_message_schema = {
             "contact": {
                 "type": "string",
                 "description": "The contact information (email) of the listing owner"
+            },
+            "message": {
+                "type": "string",
+                "description": "The initial message to send to the owner"
             }
         },
-        "required": ["listing_id", "contact"],
+        "required": ["listing_id", "contact", "message"],
         "additionalProperties": False
     }
 }
@@ -122,7 +126,7 @@ _send_message_schema = {
 _update_preferences_schema = {
     "type": "function",
     "name": "update_preferences",
-    "description": "Update the user's preferences for apartment search. Only include fields that were specifically mentioned by the user - other preferences will be preserved.",
+    "description": "Update the user's preferences for apartment search. Only include fields that were specifically mentioned by the user.",
     "parameters": {
         "type": "object",
         "properties": {
@@ -149,11 +153,18 @@ _update_preferences_schema = {
                 "description": "Preferred location/district in Vienna"
             },
             "features": {
-                "type": "array",
-                "items": {
-                    "type": "string"
+                "type": "object",
+                "properties": {
+                    "balcony": {"type": "boolean"},
+                    "parking": {"type": "boolean"},
+                    "elevator": {"type": "boolean"},
+                    "furnished": {"type": "boolean"},
+                    "pets": {"type": "boolean"},
+                    "garden": {"type": "boolean"},
+                    "storage": {"type": "boolean"},
+                    "laundry": {"type": "boolean"}
                 },
-                "description": "Special features like balcony, parking, etc. These will be added to existing features."
+                "description": "Features with boolean values indicating if they are wanted (true) or not wanted (false)"
             }
         },
         "required": [],
@@ -219,7 +230,8 @@ async def _send_message_tool(args: Any) -> ToolResult:
     return ToolResult({
         "action": "send_message",
         "listing_id": args['listing_id'],
-        "contact": args['contact']
+        "contact": args['contact'],
+        "message": args['message']
     }, ToolResultDirection.TO_CLIENT)
 
 async def _update_preferences_tool(args: Any) -> ToolResult:

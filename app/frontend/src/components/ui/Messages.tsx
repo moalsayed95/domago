@@ -6,6 +6,7 @@ interface Contact {
     email: string;
     lastMessage?: string;
     timestamp?: Date;
+    initialMessage?: string;
 }
 
 interface MessagesProps {
@@ -19,10 +20,14 @@ export default function Messages({ activeContact }: MessagesProps) {
     // When we receive a new activeContact, add it to our contacts list if it's not already there
     if (activeContact && !contacts.some(c => c.listingId === activeContact.listingId)) {
         setContacts(prev => [...prev, activeContact]);
+        // If there's an initial message, automatically select this contact
+        if (activeContact.initialMessage) {
+            setSelectedContact(activeContact);
+        }
     }
 
     if (selectedContact) {
-        return <ChatInterface contact={selectedContact} onBack={() => setSelectedContact(null)} />;
+        return <ChatInterface contact={selectedContact} onBack={() => setSelectedContact(null)} initialMessage={selectedContact.initialMessage} />;
     }
 
     return (

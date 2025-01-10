@@ -5,7 +5,7 @@ import isEqual from "lodash.isequal";
 import useRealTime from "@/hooks/useRealtime";
 import useAudioRecorder from "@/hooks/useAudioRecorder";
 import useAudioPlayer from "@/hooks/useAudioPlayer";
-import { Listing } from "./types";
+import { Listing, Preferences, AVAILABLE_FEATURES } from "./types";
 
 import logo from "./assets/logo.svg";
 import ListingCard from "./components/ui/ListingCard";
@@ -14,20 +14,6 @@ import StatusMessage from "@/components/ui/status-message";
 import { Mic, MicOff, Home, Heart, MessageCircle } from "lucide-react";
 import UserPreferences from "./components/ui/UserPreferences";
 import Messages from "./components/ui/Messages";
-
-interface Preferences {
-    budget?: {
-        min: number;
-        max: number;
-    };
-    size?: {
-        min: number;
-        max: number;
-    };
-    rooms?: number;
-    location?: string;
-    features?: string[];
-}
 
 function App() {
     const { t } = useTranslation();
@@ -46,6 +32,7 @@ function App() {
               email: string;
               lastMessage?: string;
               timestamp?: Date;
+              initialMessage?: string;
           }
         | undefined
     >();
@@ -70,25 +57,47 @@ function App() {
             const result = JSON.parse(message.tool_result);
 
             if (result.action === "update_preferences") {
-                setPreferences(prev => ({
-                    ...prev,
-                    ...result.preferences,
-                    // Special handling for nested objects
-                    budget: result.preferences.budget
-                        ? {
-                              ...prev?.budget,
-                              ...result.preferences.budget
-                          }
-                        : prev?.budget,
-                    size: result.preferences.size
-                        ? {
-                              ...prev?.size,
-                              ...result.preferences.size
-                          }
-                        : prev?.size,
-                    // Special handling for arrays
-                    features: result.preferences.features ? [...new Set([...(prev?.features || []), ...result.preferences.features])] : prev?.features
-                }));
+                setPreferences(prev => {
+                    const newPreferences = {
+                        ...prev,
+                        features: prev?.features || [...AVAILABLE_FEATURES]
+                    };
+
+                    // Update basic preferences
+                    if (result.preferences.budget) {
+                        newPreferences.budget = result.preferences.budget;
+                    }
+                    if (result.preferences.size) {
+                        newPreferences.size = result.preferences.size;
+                    }
+                    if (result.preferences.rooms !== undefined) {
+                        newPreferences.rooms = result.preferences.rooms;
+                    }
+                    if (result.preferences.location) {
+                        newPreferences.location = result.preferences.location;
+                    }
+
+                    // Update features
+                    if (result.preferences.features) {
+                        // Initialize features array if it doesn't exist
+                        if (!newPreferences.features) {
+                            newPreferences.features = [...AVAILABLE_FEATURES];
+                        }
+
+                        // Update each feature's enabled status
+                        Object.entries(result.preferences.features).forEach(([id, enabled]) => {
+                            const featureIndex = newPreferences.features.findIndex(f => f.id === id);
+                            if (featureIndex !== -1) {
+                                newPreferences.features[featureIndex] = {
+                                    ...newPreferences.features[featureIndex],
+                                    enabled: enabled as boolean
+                                };
+                            }
+                        });
+                    }
+
+                    return newPreferences;
+                });
             } else if (result.listings) {
                 const newListings = result.listings;
                 if (!isEqual(listings, newListings)) {
@@ -104,7 +113,8 @@ function App() {
                 setActiveContact({
                     listingId: result.listing_id,
                     email: result.contact,
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    initialMessage: result.message
                 });
                 setPage("messages");
             } else if (typeof result.id === "string") {
