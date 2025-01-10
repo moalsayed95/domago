@@ -98,6 +98,27 @@ _navigate_page_schema = {
     }
 }
 
+_send_message_schema = {
+    "type": "function",
+    "name": "send_message",
+    "description": "Initiate a message to the owner of a listing",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "listing_id": {
+                "type": "string",
+                "description": "The ID of the listing whose owner we want to message"
+            },
+            "contact": {
+                "type": "string",
+                "description": "The contact information (email) of the listing owner"
+            }
+        },
+        "required": ["listing_id", "contact"],
+        "additionalProperties": False
+    }
+}
+
 async def _search_tool(
     search_manager, 
     args: Any
@@ -152,6 +173,13 @@ async def _navigate_page_tool(args: Any) -> ToolResult:
     # Return the requested page to navigate to
     return ToolResult({"navigate_to": args['page']}, ToolResultDirection.TO_CLIENT)
 
+async def _send_message_tool(args: Any) -> ToolResult:
+    return ToolResult({
+        "action": "send_message",
+        "listing_id": args['listing_id'],
+        "contact": args['contact']
+    }, ToolResultDirection.TO_CLIENT)
+
 
 def attach_rag_tools(rtmt: RTMiddleTier,
     credentials: AzureKeyCredential | DefaultAzureCredential,
@@ -184,4 +212,9 @@ def attach_rag_tools(rtmt: RTMiddleTier,
     rtmt.tools["navigate_page"] = Tool(
         schema=_navigate_page_schema,
         target=lambda args: _navigate_page_tool(args)
+    )
+
+    rtmt.tools["send_message"] = Tool(
+        schema=_send_message_schema,
+        target=lambda args: _send_message_tool(args)
     )

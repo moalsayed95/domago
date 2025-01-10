@@ -13,6 +13,7 @@ import MapView from "./components/ui/MapView";
 import StatusMessage from "@/components/ui/status-message";
 import { Mic, MicOff, Home, Heart, MessageCircle } from "lucide-react";
 import UserPreferences from "./components/ui/UserPreferences";
+import Messages from "./components/ui/Messages";
 
 function App() {
     const { t } = useTranslation();
@@ -24,6 +25,16 @@ function App() {
     // Favorites + Page
     const [favorites, setFavorites] = useState<string[]>([]);
     const [page, setPage] = useState<"main" | "favorites" | "messages">("main");
+
+    const [activeContact, setActiveContact] = useState<
+        | {
+              listingId: string;
+              email: string;
+              lastMessage?: string;
+              timestamp?: Date;
+          }
+        | undefined
+    >();
 
     const listingsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -54,6 +65,13 @@ function App() {
                         setHighlightedListingId(null);
                     }
                 }
+            } else if (result.action === "send_message") {
+                setActiveContact({
+                    listingId: result.listing_id,
+                    email: result.contact,
+                    timestamp: new Date()
+                });
+                setPage("messages");
             } else if (typeof result.id === "string") {
                 // Highlight the listing
                 setHighlightedListingId(result.id);
@@ -207,8 +225,8 @@ function App() {
             {/* Main Content - Updated Layout */}
             <main className="flex flex-grow flex-col">
                 {page === "messages" ? (
-                    <div className="container mx-auto p-4">
-                        <p className="text-center text-lg">Messages page coming soon...</p>
+                    <div className="container mx-auto h-[calc(100vh-200px)] p-4">
+                        <Messages activeContact={activeContact} />
                     </div>
                 ) : (
                     <div className="container mx-auto flex flex-row gap-4 p-4">
