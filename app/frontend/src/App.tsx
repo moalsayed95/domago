@@ -15,6 +15,20 @@ import { Mic, MicOff, Home, Heart, MessageCircle } from "lucide-react";
 import UserPreferences from "./components/ui/UserPreferences";
 import Messages from "./components/ui/Messages";
 
+interface Preferences {
+    budget?: {
+        min: number;
+        max: number;
+    };
+    size?: {
+        min: number;
+        max: number;
+    };
+    rooms?: number;
+    location?: string;
+    features?: string[];
+}
+
 function App() {
     const { t } = useTranslation();
     const [isRecording, setIsRecording] = useState(false);
@@ -36,6 +50,8 @@ function App() {
         | undefined
     >();
 
+    const [preferences, setPreferences] = useState<Preferences | undefined>();
+
     const listingsContainerRef = useRef<HTMLDivElement>(null);
 
     const { startSession, addUserAudio, inputAudioBufferClear } = useRealTime({
@@ -53,8 +69,27 @@ function App() {
             console.log("Received tool response", message);
             const result = JSON.parse(message.tool_result);
 
-            // If we have new listings, update them
-            if (result.listings) {
+            if (result.action === "update_preferences") {
+                setPreferences(prev => ({
+                    ...prev,
+                    ...result.preferences,
+                    // Special handling for nested objects
+                    budget: result.preferences.budget
+                        ? {
+                              ...prev?.budget,
+                              ...result.preferences.budget
+                          }
+                        : prev?.budget,
+                    size: result.preferences.size
+                        ? {
+                              ...prev?.size,
+                              ...result.preferences.size
+                          }
+                        : prev?.size,
+                    // Special handling for arrays
+                    features: result.preferences.features ? [...new Set([...(prev?.features || []), ...result.preferences.features])] : prev?.features
+                }));
+            } else if (result.listings) {
                 const newListings = result.listings;
                 if (!isEqual(listings, newListings)) {
                     setListings(newListings);
@@ -232,7 +267,7 @@ function App() {
                     <div className="container mx-auto flex flex-row gap-4 p-4">
                         {/* User Preferences Section */}
                         <div className="w-1/4">
-                            <UserPreferences />
+                            <UserPreferences preferences={preferences} />
                         </div>
 
                         {/* Map Section - Now wider */}

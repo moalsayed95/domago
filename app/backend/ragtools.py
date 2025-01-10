@@ -119,6 +119,48 @@ _send_message_schema = {
     }
 }
 
+_update_preferences_schema = {
+    "type": "function",
+    "name": "update_preferences",
+    "description": "Update the user's preferences for apartment search. Only include fields that were specifically mentioned by the user - other preferences will be preserved.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "budget": {
+                "type": "object",
+                "properties": {
+                    "min": {"type": "number"},
+                    "max": {"type": "number"}
+                }
+            },
+            "size": {
+                "type": "object",
+                "properties": {
+                    "min": {"type": "number"},
+                    "max": {"type": "number"}
+                }
+            },
+            "rooms": {
+                "type": "number",
+                "description": "Desired number of rooms"
+            },
+            "location": {
+                "type": "string",
+                "description": "Preferred location/district in Vienna"
+            },
+            "features": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "description": "Special features like balcony, parking, etc. These will be added to existing features."
+            }
+        },
+        "required": [],
+        "additionalProperties": False
+    }
+}
+
 async def _search_tool(
     search_manager, 
     args: Any
@@ -180,6 +222,12 @@ async def _send_message_tool(args: Any) -> ToolResult:
         "contact": args['contact']
     }, ToolResultDirection.TO_CLIENT)
 
+async def _update_preferences_tool(args: Any) -> ToolResult:
+    return ToolResult({
+        "action": "update_preferences",
+        "preferences": args
+    }, ToolResultDirection.TO_CLIENT)
+
 
 def attach_rag_tools(rtmt: RTMiddleTier,
     credentials: AzureKeyCredential | DefaultAzureCredential,
@@ -217,4 +265,9 @@ def attach_rag_tools(rtmt: RTMiddleTier,
     rtmt.tools["send_message"] = Tool(
         schema=_send_message_schema,
         target=lambda args: _send_message_tool(args)
+    )
+
+    rtmt.tools["update_preferences"] = Tool(
+        schema=_update_preferences_schema,
+        target=lambda args: _update_preferences_tool(args)
     )

@@ -1,62 +1,83 @@
-import { Card, CardHeader, CardTitle, CardContent } from "./card";
-import { Home, MapPin, Euro, Bed } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-export default function UserPreferences() {
-    // This would typically be connected to your state management
-    // These are example preferences - you would need to implement the actual state management
-    const preferences = {
-        location: "City Center",
-        priceRange: "€1,000 - €2,000",
-        rooms: "2 bedrooms",
-        features: ["Balcony", "Modern Kitchen"]
+interface Preferences {
+    budget?: {
+        min: number;
+        max: number;
     };
+    size?: {
+        min: number;
+        max: number;
+    };
+    rooms?: number;
+    location?: string;
+    features?: string[];
+}
+
+interface UserPreferencesProps {
+    preferences?: Preferences;
+}
+
+export default function UserPreferences({ preferences }: UserPreferencesProps) {
+    const { t } = useTranslation();
+
+    if (!preferences) {
+        return (
+            <div className="rounded-lg border p-4">
+                <h2 className="mb-2 text-lg font-semibold">{t("Your Preferences")}</h2>
+                <p className="text-sm text-gray-500">{t("Start a conversation to set your preferences")}</p>
+            </div>
+        );
+    }
 
     return (
-        <Card className="h-full">
-            <CardHeader>
-                <CardTitle className="text-xl">Your Preferences</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                        <MapPin className="h-5 w-5 text-purple-500" />
-                        <div>
-                            <p className="font-semibold">Desired Location</p>
-                            <p className="text-sm text-gray-600">{preferences.location}</p>
-                        </div>
-                    </div>
+        <div className="rounded-lg border p-4">
+            <h2 className="mb-4 text-lg font-semibold">{t("Your Preferences")}</h2>
 
-                    <div className="flex items-center gap-2">
-                        <Euro className="h-5 w-5 text-purple-500" />
-                        <div>
-                            <p className="font-semibold">Price Range</p>
-                            <p className="text-sm text-gray-600">{preferences.priceRange}</p>
-                        </div>
-                    </div>
+            {preferences.budget && (
+                <div className="mb-3">
+                    <h3 className="text-sm font-medium text-gray-700">{t("Budget")}</h3>
+                    <p className="text-sm text-gray-600">
+                        €{preferences.budget.min.toLocaleString()} - €{preferences.budget.max.toLocaleString()}
+                    </p>
+                </div>
+            )}
 
-                    <div className="flex items-center gap-2">
-                        <Bed className="h-5 w-5 text-purple-500" />
-                        <div>
-                            <p className="font-semibold">Room Requirements</p>
-                            <p className="text-sm text-gray-600">{preferences.rooms}</p>
-                        </div>
-                    </div>
+            {preferences.size && (
+                <div className="mb-3">
+                    <h3 className="text-sm font-medium text-gray-700">{t("Size")}</h3>
+                    <p className="text-sm text-gray-600">
+                        {preferences.size.min}m² - {preferences.size.max}m²
+                    </p>
+                </div>
+            )}
 
-                    <div className="flex items-center gap-2">
-                        <Home className="h-5 w-5 text-purple-500" />
-                        <div>
-                            <p className="font-semibold">Desired Features</p>
-                            <div className="mt-1 flex flex-wrap gap-2">
-                                {preferences.features.map(feature => (
-                                    <span key={feature} className="rounded-full bg-purple-100 px-3 py-1 text-xs text-purple-700">
-                                        {feature}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
+            {preferences.rooms && (
+                <div className="mb-3">
+                    <h3 className="text-sm font-medium text-gray-700">{t("Rooms")}</h3>
+                    <p className="text-sm text-gray-600">{preferences.rooms}</p>
+                </div>
+            )}
+
+            {preferences.location && (
+                <div className="mb-3">
+                    <h3 className="text-sm font-medium text-gray-700">{t("Location")}</h3>
+                    <p className="text-sm text-gray-600">{preferences.location}</p>
+                </div>
+            )}
+
+            {preferences.features && preferences.features.length > 0 && (
+                <div className="mb-3">
+                    <h3 className="text-sm font-medium text-gray-700">{t("Features")}</h3>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                        {preferences.features.map(feature => (
+                            <span key={feature} className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
+                                {feature}
+                            </span>
+                        ))}
                     </div>
                 </div>
-            </CardContent>
-        </Card>
+            )}
+        </div>
     );
 }
