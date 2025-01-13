@@ -53,7 +53,7 @@ class IndexManager:
         # OpenAI client for embedding
         self.azure_openai_client = AzureOpenAI(
             api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
-            azure_endpoint=os.getenv("AZURE_ENDPOINT"),
+            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
             api_key=os.getenv("AZURE_OPENAI_API_KEY")
         )
 

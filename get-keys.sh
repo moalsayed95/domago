@@ -10,6 +10,7 @@ if [ -z "$(az account show)" ]; then
   az login --use-device-code
 fi
 
+location="swedencentral"  # Default location for the resources
 # Get the resource group name from the script parameter named resource-group
 resourceGroupName=""
 
@@ -67,6 +68,7 @@ cosmosdbEndpoint=$(az cosmosdb show --name $cosmosdbAccountName --resource-group
 storageAccountKey=$(az storage account keys list --account-name $storageAccountName --resource-group $resourceGroupName --query "[0].value" -o tsv)
 searchServiceKey=$(az search admin-key show --resource-group $resourceGroupName --service-name $searchServiceName --query primaryKey -o tsv)
 storageAccountConnectionString=$(az storage account show-connection-string --name $storageAccountName --resource-group $resourceGroupName --query connectionString -o tsv)
+azureOpenAiEndpoint="AZURE_OPENAI_ENDPOINT=https://$location.openai.azure.com/"
 
 # Overwrite the existing config.env file
 if [ -f ./.env ]; then
@@ -77,7 +79,7 @@ fi
 
 # Store the keys and properties in a file
 echo "Storing the keys and properties in '.env' file..."
-echo "AZURE_OPENAI_ENDPOINT=\"$aiCognitiveServicesEndpoint\"" >> ./.env
+echo "AZURE_OPENAI_ENDPOINT=\"https://$location.openai.azure.com/\"" >> ./.env
 echo "AZURE_OPENAI_REALTIME_DEPLOYMENT=\"gpt-4o-realtime-preview\"" >> ./.env
 echo "AZURE_OPENAI_REALTIME_VOICE_CHOICE=\"alloy\"" >> ./.env
 echo "AZURE_OPENAI_API_VERSION=\"2024-05-01-preview\"" >> ./.env
@@ -88,4 +90,5 @@ echo "AZURE_SEARCH_SERVICE_NAME=\"$searchServiceName\"" >> ./.env
 echo "AZURE_SEARCH_API_KEY=\"$searchServiceKey\"" >> ./.env
 echo "AZURE_MAPS_SUBSCRIPTION_KEY=\"$azureMapsKey\"" >> ./.env  # Added Azure Maps key
 echo "AZURE_STORAGE_CONNECTION_STRING=\"$storageAccountConnectionString\"" >> ./.env  # Added storage connection string
+
 echo "Keys and properties are stored in '.env' file successfully."
