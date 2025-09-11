@@ -18,7 +18,7 @@ logger = logging.getLogger("voicerag")
 async def create_app():
     if not os.environ.get("RUNNING_IN_PRODUCTION"):
         logger.info("Running in development mode, loading from .env file")
-        load_dotenv()
+        load_dotenv(override=True)
 
     llm_key = os.environ.get("AZURE_OPENAI_API_KEY")
     search_key = os.environ.get("AZURE_SEARCH_API_KEY")
@@ -84,7 +84,7 @@ async def create_app():
         service_name=os.getenv("AZURE_SEARCH_SERVICE_NAME"),
         api_key=os.getenv("AZURE_SEARCH_API_KEY"),
         index_name=os.getenv("AZURE_SEARCH_INDEX"),
-        embedding_model="text-embedding-3-large"
+        embedding_model=os.getenv("AZURE_OPENAI_EMBEDDING_MODEL"),
     )
 
     attach_rag_tools(rtmt, credentials=search_credential, search_manager=search_manager)

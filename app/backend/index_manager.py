@@ -191,7 +191,7 @@ class IndexManager:
 if __name__ == "__main__":
     service_name = os.getenv("AZURE_SEARCH_SERVICE_NAME")
     api_key = os.getenv("AZURE_SEARCH_API_KEY")
-    embedding_model = "text-embedding-3-large"
+    embedding_model = os.getenv("AZURE_OPENAI_EMBEDDING_MODEL")
     AZURE_SEARCH_INDEX = os.getenv("AZURE_SEARCH_INDEX")
 
     index_manager = IndexManager(

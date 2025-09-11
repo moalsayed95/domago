@@ -28,7 +28,7 @@ export default function UserPreferences({ preferences }: UserPreferencesProps) {
         <div className="rounded-lg border p-4">
             <h2 className="mb-4 text-lg font-semibold">{t("Your Preferences")}</h2>
 
-            {preferences.budget && (
+            {preferences.budget && preferences.budget.min !== undefined && preferences.budget.max !== undefined && (
                 <div className="mb-3">
                     <h3 className="flex items-center gap-2 text-sm font-medium text-gray-700">
                         <Icons.Wallet className="h-4 w-4" />
@@ -40,7 +40,7 @@ export default function UserPreferences({ preferences }: UserPreferencesProps) {
                 </div>
             )}
 
-            {preferences.size && (
+            {preferences.size && preferences.size.min !== undefined && preferences.size.max !== undefined && (
                 <div className="mb-3">
                     <h3 className="flex items-center gap-2 text-sm font-medium text-gray-700">
                         <Icons.Square className="h-4 w-4" />
@@ -72,7 +72,7 @@ export default function UserPreferences({ preferences }: UserPreferencesProps) {
                 </div>
             )}
 
-            {preferences.features.length > 0 && (
+            {preferences.features && preferences.features.length > 0 && (
                 <div className="mb-3">
                     <h3 className="text-sm font-medium text-gray-700">{t("Features")}</h3>
                     <div className="mt-2 flex flex-wrap gap-2">

@@ -1,0 +1,16 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp==3.9.3",
+    "azure-identity==1.18.0",
+    "azure-search-documents==11.6.0b4",
+    "azure-storage-blob==12.23.1",
+    "gunicorn>=23.0.0",
+    "openai==1.58.1",
+    "python-dotenv==1.0.1",
+    "rich>=14.1.0",
+]
